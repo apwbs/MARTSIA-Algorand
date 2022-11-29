@@ -190,10 +190,16 @@ def generate_pk_sk(groupObj, maabe, api):
 
     new_file = api.add(name_file)
     hash_file = new_file['Hash']
-    # print(f'ipfs hash: {hash_file}')
+    print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.11 blockchain/PublicKeyContractMain.py %s %s %s %s' % (
-        authority3_private_key, app_id_public_keys, response[1], hash_file)))
+    method = 'read_box'
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
+                             app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    hashed_elements_pp_pk = result[:359] + hash_file
+
+    method = 'put_box'
+    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+        authority3_private_key, method, app_id_box, hashed_elements_pp_pk)))
 
 
 def main():
@@ -203,8 +209,8 @@ def main():
 
     # initial_parameters_hashed(groupObj)
     # initial_parameters()
-    generate_public_parameters(groupObj, maabe, api)
-    # generate_pk_sk(groupObj, maabe, api)
+    # generate_public_parameters(groupObj, maabe, api)
+    generate_pk_sk(groupObj, maabe, api)
 
 
 if __name__ == '__main__':

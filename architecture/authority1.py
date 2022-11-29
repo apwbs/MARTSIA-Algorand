@@ -179,41 +179,36 @@ def retrieve_public_parameters():
 
 
 def generate_pk_sk(groupObj, maabe, api):
-    with open('files/authority1/prova.txt', 'r') as g3:
-        hashed_elements_pp_padded = g3.read()
+    response = retrieve_public_parameters()
+    public_parameters = bytesToObject(response[0], groupObj)
+    H = lambda x: self.group.hash(x, G2)
+    F = lambda x: self.group.hash(x, G2)
+    public_parameters["H"] = H
+    public_parameters["F"] = F
 
-    hash_file = 'QmNgDkqHRWhZSSACEDbFXQABX7YsbJa1N4CtNGjFZkEcwy'
-    hashed_elements_pp_pk = hashed_elements_pp_padded[:359] + hash_file
+    # authsetup 2AA
+    (pk1, sk1) = maabe.authsetup(public_parameters, 'UT')
+    pk1_bytes = objectToBytes(pk1, groupObj)
+    sk1_bytes = objectToBytes(sk1, groupObj)
 
-    with open('files/authority1/prova.txt', 'w') as g1_1w:
-        g1_1w.write(hashed_elements_pp_pk)
+    name_file = 'files/authority1/authority_ut_pk.txt'
+    with open(name_file, 'wb') as a1:
+        a1.write(pk1_bytes)
+    with open('files/authority1/private_key_au1.txt', 'wb') as as1:
+        as1.write(sk1_bytes)
 
+    new_file = api.add(name_file)
+    hash_file = new_file['Hash']
+    print(f'ipfs hash: {hash_file}')
 
+    method = 'read_box'
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority1_private_key, method,
+                             app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    hashed_elements_pp_pk = result[:359] + hash_file
 
-    # response = retrieve_public_parameters()
-    # public_parameters = bytesToObject(response[0], groupObj)
-    # H = lambda x: self.group.hash(x, G2)
-    # F = lambda x: self.group.hash(x, G2)
-    # public_parameters["H"] = H
-    # public_parameters["F"] = F
-    #
-    # # authsetup 2AA
-    # (pk1, sk1) = maabe.authsetup(public_parameters, 'UT')
-    # pk1_bytes = objectToBytes(pk1, groupObj)
-    # sk1_bytes = objectToBytes(sk1, groupObj)
-    #
-    # name_file = 'files/authority1/authority_ut_pk.txt'
-    # with open(name_file, 'wb') as a1:
-    #     a1.write(pk1_bytes)
-    # with open('files/authority1/private_key_au1.txt', 'wb') as as1:
-    #     as1.write(sk1_bytes)
-    #
-    # new_file = api.add(name_file)
-    # hash_file = new_file['Hash']
-    # # print(f'ipfs hash: {hash_file}')
-
-    # print(os.system('python3.11 blockchain/PublicKeyContractMain.py %s %s %s %s' % (
-    #     authority1_private_key, app_id_public_keys, response[1], hash_file)))
+    method = 'put_box'
+    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+        authority1_private_key, method, app_id_box, hashed_elements_pp_pk)))
 
 
 def main():
@@ -223,8 +218,8 @@ def main():
 
     # initial_parameters_hashed(groupObj)
     # initial_parameters()
-    generate_public_parameters(groupObj, maabe, api)
-    # generate_pk_sk(groupObj, maabe, api)
+    # generate_public_parameters(groupObj, maabe, api)
+    generate_pk_sk(groupObj, maabe, api)
 
     # test = api.name.publish('/ipfs/' + hash_file)
     # print(test)

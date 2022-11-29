@@ -2,7 +2,9 @@ from MessageContract import *
 from algosdk.atomic_transaction_composer import AtomicTransactionComposer
 import sys
 
-sys.path.insert(0, '../')
+# sys.path.insert(0, '../')
+# from util import *
+sys.path.insert(1, 'blockchain/')
 from util import *
 
 # user declared account mnemonics
@@ -30,7 +32,7 @@ def saveData(
         hash_file
     ]
 
-    with open("msg_contract.json") as f:
+    with open("blockchain/MessageContract/msg_contract.json") as f:
         js = f.read()
     atc.add_method_call(
         app_id=app_id,
@@ -64,13 +66,13 @@ def createApp(
     approval_program, clear_program, contract = router.compile_program(version=6,
                                                                        optimize=OptimizeOptions(scratch_slots=True))
 
-    with open("./msg_approval.teal", "w") as f:
+    with open("msg_approval.teal", "w") as f:
         f.write(approval_program)
 
-    with open("./msg_clear.teal", "w") as f:
+    with open("msg_clear.teal", "w") as f:
         f.write(clear_program)
 
-    with open("./msg_contract.json", "w") as f:
+    with open("msg_contract.json", "w") as f:
         import json
 
         f.write(json.dumps(contract.dictify()))

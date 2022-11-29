@@ -33,17 +33,9 @@ def send(msg):
     send_length = str(msg_length).encode(FORMAT)
     send_length += b' ' * (HEADER - len(send_length))
     conn.send(send_length)
-    # print(send_length)
     conn.send(message)
     receive = conn.recv(6000).decode(FORMAT)
     if len(receive) != 0:
-        with open("files/reader/public_parameters_reader1.txt", "w") as text_file:
-            text_file.write(receive)
-        with open("files/reader/public_parameters_reader2.txt", "w") as text_file:
-            text_file.write(receive)
-        with open("files/reader/public_parameters_reader3.txt", "w") as text_file:
-            text_file.write(receive)
-
         # with open("files/reader/user_sk1.txt", "w") as text_file:
         #     text_file.write(receive)
         # with open("files/reader/user_sk2.txt", "w") as text_file:
@@ -53,17 +45,11 @@ def send(msg):
 
 
 reader_address = '7M5UN2VQJV6GW7V43XZ2KGF5TIOHOTQ3OYQXDPZAQLZQFYQXU5FOJJHVMU'
-process_instance_id = 13781065728986458357
+process_instance_id = 1369747727
 gid = "bob"
-
-send("Auth1 - Send me the public parameters||" + str(process_instance_id))
-# send("Auth2 - Send me the public parameters||" + str(process_instance_id))
-# send("Auth3 - Send me the public parameters||" + str(process_instance_id))
-
-
 # send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
 # send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
-# send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
+send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
 # exit()
 # input()
 

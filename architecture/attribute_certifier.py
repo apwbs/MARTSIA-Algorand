@@ -1,26 +1,15 @@
 import json
-from datetime import datetime
-import random
 from decouple import config
 import ipfshttpclient
 import os
 
+app_id_box = config('APPLICATION_ID_BOX')
 app_id_certifier = config('APPLICATION_ID_CERTIFIER')
 certifier_private_key = config('CERTIFIER_PRIVATEKEY')
 
 
 def generate_attributes():
-    # now = datetime.now()
-    # now = int(now.strftime("%Y%m%d%H%M%S%f"))
-    # random.seed(now)
-    # process_instance_id = random.randint(1, 2 ** 64)
-    # print(f'process instance id: {process_instance_id}')
-    #
-    # with open('files/process_instance_id.txt', 'w') as piw:
-    #     piw.write(str(process_instance_id))
-
-    with open('files/process_instance_id.txt', 'r') as cir:
-        process_instance_id = cir.read()
+    process_instance_id = app_id_box
 
     dict_users = {
         '7M5UN2VQJV6GW7V43XZ2KGF5TIOHOTQ3OYQXDPZAQLZQFYQXU5FOJJHVMU': [str(process_instance_id) + '@UT',

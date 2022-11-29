@@ -6,12 +6,18 @@ import ipfshttpclient
 import json
 from maabe_class import *
 import sys
+import base64
+import subprocess
+from algosdk.encoding import decode_address, encode_address
+import ast
+import retriever
 
-sys.path.insert(0, 'blockchain/')
-from blockchain.retreiver import *
-
-app_id_public_parameters = config('APPLICATION_ID_PUBLIC_PARAMETERS')
+app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
+
+authority1_address = config('AUTHORITY1_ADDRESS')
+authority2_address = config('AUTHORITY2_ADDRESS')
+authority3_address = config('AUTHORITY3_ADDRESS')
 
 
 def merge_dicts(*dict_args):
@@ -25,11 +31,34 @@ def merge_dicts(*dict_args):
     return result
 
 
-def generate_public_parameters(api, process_instance_id):
-    public_parameters_link = retrievePublicParameters(app_id_public_parameters, process_instance_id)
-    getfile = api.cat(public_parameters_link)
-    with open('files/reader/public_parameters_reader.txt', 'wb') as ppw:
-        ppw.write(getfile)
+def retrieve_data(authority_address):
+    method = 'read_specific_box'
+    box_name = base64.b64encode(decode_address(authority_address))
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+                             app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    result = ast.literal_eval(result)
+    all_elements = base64.b64decode(result['value']).decode('utf-8')
+    all_elements = all_elements.split('#')
+    public_parameters = all_elements[2]
+    return public_parameters
+
+
+def generate_public_parameters():
+    check_parameters = []
+
+    data = retrieve_data(authority1_address)
+    check_parameters.append(data)
+
+    data = retrieve_data(authority2_address)
+    check_parameters.append(data)
+
+    data = retrieve_data(authority3_address)
+    check_parameters.append(data)
+
+    if len(set(check_parameters)) == 1:
+        getfile = api.cat(check_parameters[0])
+        with open('files/reader/public_parameters_reader.txt', 'wb') as ppw:
+            ppw.write(getfile)
 
 
 def retrieve_public_parameters():
@@ -39,8 +68,8 @@ def retrieve_public_parameters():
 
 
 def main(groupObj, maabe, message_id, slice_id):
-    response = retrieve_public_parameters()
-    public_parameters = bytesToObject(response, groupObj)
+    public_parameters = retrieve_public_parameters()
+    public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
     public_parameters["H"] = H
@@ -62,7 +91,7 @@ def main(groupObj, maabe, message_id, slice_id):
     user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3)}
 
     # decrypt
-    ciphertext_link = retrieveMessage(app_id_messages, message_id)
+    ciphertext_link = retriever.retrieveMessage(app_id_messages, message_id)
     getfile = api.cat(ciphertext_link)
     ciphertext_dict = json.loads(getfile)
     slice_check = ciphertext_dict['header']
@@ -85,8 +114,8 @@ if __name__ == '__main__':
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-    process_instance_id = 13781065728986458357
-    # generate_public_parameters(api, process_instance_id)
-    message_id = 2559868811984323903
-    slice_id = 12883135380544938366
+    process_instance_id = app_id_box
+    # generate_public_parameters()
+    message_id = 7244659340201268817
+    slice_id = 8903551715370266575
     main(groupObj, maabe, message_id, slice_id)

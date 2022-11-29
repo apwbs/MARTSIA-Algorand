@@ -8,50 +8,60 @@ from maabe_class import *
 from datetime import datetime
 import random
 import os
-import sys
+import base64
+import subprocess
+from algosdk.encoding import decode_address, encode_address
+import ast
 
-sys.path.insert(0, 'blockchain/')
-from blockchain.retreiver import *
-
-app_id_public_parameters = config('APPLICATION_ID_PUBLIC_PARAMETERS')
-app_id_public_keys = config('APPLICATION_ID_PUBLIC_KEYS')
+app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
 
 authority1_address = config('AUTHORITY1_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
+authority3_address = config('AUTHORITY3_ADDRESS')
 data_owner_private_key = config('DATAOWNER_PRIVATEKEY')
 
 
-def retrieve_public_parameters():
-    with open('files/data_owner/public_parameters_dataowner1.txt', 'rb') as ppr:
-        public_parameters1 = ppr.read()
-    with open('files/data_owner/public_parameters_dataowner2.txt', 'rb') as ppr:
-        public_parameters2 = ppr.read()
-    with open('files/data_owner/public_parameters_dataowner3.txt', 'rb') as ppr:
-        public_parameters3 = ppr.read()
-    if public_parameters1 == public_parameters2 == public_parameters3:
-        return public_parameters1
+def retrieve_data(authority_address):
+    method = 'read_specific_box'
+    box_name = base64.b64encode(decode_address(authority_address))
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+                             app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    result = ast.literal_eval(result)
+    all_elements = base64.b64decode(result['value']).decode('utf-8')
+    all_elements = all_elements.split('#')
+    public_parameters = all_elements[2]
+    public_key = all_elements[3]
+    return public_parameters, public_key
 
 
 def main(groupObj, maabe, api, process_instance_id):
-    response = retrieve_public_parameters()
-    public_parameters = bytesToObject(response, groupObj)
-    H = lambda x: self.group.hash(x, G2)
-    F = lambda x: self.group.hash(x, G2)
-    public_parameters["H"] = H
-    public_parameters["F"] = F
+    global public_parameters
+    check_parameters = []
 
-    with open('files/data_owner/public_key_auth1.txt', 'rb') as pk1r:
-        pk1 = pk1r.read()
+    data = retrieve_data(authority1_address)
+    check_parameters.append(data[0])
+    pk1 = api.cat(data[1])
     pk1 = bytesToObject(pk1, groupObj)
 
-    with open('files/data_owner/public_key_auth2.txt', 'rb') as pk2r:
-        pk2 = pk2r.read()
+    data = retrieve_data(authority2_address)
+    check_parameters.append(data[0])
+    pk2 = api.cat(data[1])
     pk2 = bytesToObject(pk2, groupObj)
 
-    with open('files/data_owner/public_key_auth3.txt', 'rb') as pk3r:
-        pk3 = pk3r.read()
+    data = retrieve_data(authority3_address)
+    check_parameters.append(data[0])
+    pk3 = api.cat(data[1])
     pk3 = bytesToObject(pk3, groupObj)
+
+    # res = all(ele == check_parameters[0] for ele in check_parameters)  # another method to check if the list is equal
+    if len(set(check_parameters)) == 1:
+        getfile = api.cat(check_parameters[0])
+        public_parameters = bytesToObject(getfile, groupObj)
+        H = lambda x: self.group.hash(x, G2)
+        F = lambda x: self.group.hash(x, G2)
+        public_parameters["H"] = H
+        public_parameters["F"] = F
 
     # public keys authorities
     pk = {'UT': pk1, 'OU': pk2, 'OT': pk3}
@@ -113,7 +123,7 @@ def main(groupObj, maabe, api, process_instance_id):
     hash_file = new_file['Hash']
     print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.11 blockchain/MessageContractMain.py %s %s %s %s' % (
+    print(os.system('python3.11 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
         data_owner_private_key, app_id_messages, message_id, hash_file)))
 
 
@@ -122,5 +132,5 @@ if __name__ == '__main__':
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-    process_instance_id = 10615895041881986071
+    process_instance_id = app_id_box
     main(groupObj, maabe, api, process_instance_id)

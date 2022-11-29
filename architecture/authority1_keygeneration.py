@@ -5,19 +5,15 @@ from charm.core.engine.util import objectToBytes, bytesToObject
 import ipfshttpclient
 import json
 import sys
-
-sys.path.insert(0, 'blockchain/')
-from blockchain.retreiver import *
+import retriever
 
 app_id_attribute = config('APPLICATION_ID_CERTIFIER')
 
 
 def retrieve_public_parameters():
-    with open('files/process_instance_id.txt', 'r') as cir:
-        process_instance_id = cir.read()
     with open('files/authority1/public_parameters_authority1.txt', 'rb') as ppa2:
         public_parameters = ppa2.read()
-    return public_parameters, process_instance_id
+    return public_parameters
 
 
 def generate_user_key(gid, process_instance_id, reader_address):
@@ -26,7 +22,7 @@ def generate_user_key(gid, process_instance_id, reader_address):
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
     response = retrieve_public_parameters()
-    public_parameters = bytesToObject(response[0], groupObj)
+    public_parameters = bytesToObject(response, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
     public_parameters["H"] = H
@@ -37,9 +33,10 @@ def generate_user_key(gid, process_instance_id, reader_address):
     sk1 = bytesToObject(sk1, groupObj)
 
     # keygen Bob
-    attributes_ipfs_link = retrieveReaderAttributes(app_id_attribute, process_instance_id)
+    attributes_ipfs_link = retriever.retrieveReaderAttributes(app_id_attribute, process_instance_id)
     getfile = api.cat(attributes_ipfs_link)
-    attributes_dict = json.loads(getfile)
+    getfile = getfile.split(b'\n')
+    attributes_dict = json.loads(getfile[1].decode('utf-8'))
     user_attr1 = attributes_dict[reader_address]
     user_attr1 = [k for k in user_attr1 if k.endswith('@UT')]
     user_sk1 = maabe.multiple_attributes_keygen(public_parameters, sk1, gid, user_attr1)

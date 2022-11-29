@@ -2,7 +2,6 @@ import socket
 import ssl
 import threading
 import authority2_keygeneration
-import authority_keyretrieve
 from decouple import config
 authority2_address = config('AUTHORITY2_ADDRESS')
 
@@ -32,14 +31,6 @@ function triggered by the client handler. Here starts the ciphering of the messa
 """
 
 
-def retrieve_public_key_auth2(process_instance_id):
-    return authority_keyretrieve.retrieve_public_key(process_instance_id, authority2_address)
-
-
-def retrieve_public_params_auth2(process_instance_id):
-    return authority_keyretrieve.retrieve_public_parameters(process_instance_id, authority2_address)
-
-
 def generate_key_auth2(gid, process_instance_id, reader_address):
     return authority2_keygeneration.generate_user_key(gid, process_instance_id, reader_address)
 
@@ -64,12 +55,6 @@ def handle_client(conn, addr):
             # print(f"[{addr}] {msg}")
             # conn.send("Msg received!".encode(FORMAT))
             message = msg.split('||')
-            if message[0] == "Auth2 - Send me the public keys of all the authorities and the public parameters":
-                pp_pk2 = retrieve_public_key_auth2(message[1])
-                conn.send(pp_pk2[0] + b'\n' + pp_pk2[1])
-            if message[0] == "Auth2 - Send me the public parameters":
-                pp2 = retrieve_public_params_auth2(message[1])
-                conn.send(pp2[0] + b'\n' + pp2[1])
             if message[0] == "Auth2 - Generate your part of my key":
                 user_sk2 = generate_key_auth2(message[1], message[2], message[3])
                 conn.send(user_sk2)

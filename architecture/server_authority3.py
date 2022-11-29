@@ -2,12 +2,12 @@ import socket
 import ssl
 import threading
 import authority3_keygeneration
-import authority_keyretrieve
 from decouple import config
+
 authority3_address = config('AUTHORITY3_ADDRESS')
 
 HEADER = 64
-PORT = 5061
+PORT = 5060
 server_cert = 'client-server/Keys/server.crt'
 server_key = 'client-server/Keys/server.key'
 client_certs = 'client-server/Keys/client.crt'
@@ -30,14 +30,6 @@ bindsocket.listen(5)
 """
 function triggered by the client handler. Here starts the ciphering of the message with the policy.
 """
-
-
-def retrieve_public_key_auth3(process_instance_id):
-    return authority_keyretrieve.retrieve_public_key(process_instance_id, authority3_address)
-
-
-def retrieve_public_params_auth3(process_instance_id):
-    return authority_keyretrieve.retrieve_public_parameters(process_instance_id, authority3_address)
 
 
 def generate_key_auth3(gid, process_instance_id, reader_address):
@@ -64,12 +56,6 @@ def handle_client(conn, addr):
             # print(f"[{addr}] {msg}")
             # conn.send("Msg received!".encode(FORMAT))
             message = msg.split('||')
-            if message[0] == "Auth3 - Send me the public keys of all the authorities and the public parameters":
-                pp_pk3 = retrieve_public_key_auth3(message[1])
-                conn.send(pp_pk3[0] + b'\n' + pp_pk3[1])
-            if message[0] == "Auth3 - Send me the public parameters":
-                pp3 = retrieve_public_params_auth3(message[1])
-                conn.send(pp3[0] + b'\n' + pp3[1])
             if message[0] == "Auth3 - Generate your part of my key":
                 user_sk3 = generate_key_auth3(message[1], message[2], message[3])
                 conn.send(user_sk3)

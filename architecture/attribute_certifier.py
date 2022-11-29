@@ -4,13 +4,8 @@ import random
 from decouple import config
 import ipfshttpclient
 import os
-import validator
-import sys
 
-sys.path.insert(0, 'blockchain/BoxContract/')
-from blockchain.BoxContract import BoxContractMain
-
-app_id_attribute = config('APPLICATION_ID_CERTIFIER')
+app_id_certifier = config('APPLICATION_ID_CERTIFIER')
 certifier_private_key = config('CERTIFIER_PRIVATEKEY')
 
 
@@ -33,26 +28,18 @@ def generate_attributes():
                                                                        'PHD@UT', 'STUDENT@OU', 'STUDENT@OT']
     }
 
-    # api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
-    # dict_users_dumped = json.dumps(dict_users)
-    # name_file = 'files/users_attributes.txt'
-    # with open(name_file, 'w') as ua:
-    #     # ua.write('process instance id: ' + str(process_instance_id) + '\n')
-    #     ua.write(dict_users_dumped)
-    # new_file = api.add(name_file)
-    # hash_file = new_file['Hash']
-    # print(f'ipfs hash: {hash_file}')
+    api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+    dict_users_dumped = json.dumps(dict_users)
+    name_file = 'files/users_attributes.txt'
+    with open(name_file, 'w') as ua:
+        ua.write('process instance id: ' + str(process_instance_id) + '\n')
+        ua.write(dict_users_dumped)
+    new_file = api.add(name_file)
+    hash_file = new_file['Hash']
+    print(f'ipfs hash: {hash_file}')
 
-    # print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s
-    # %s' % ( certifier_private_key, app_id_attribute, process_instance_id, hash_file)))
-
-    # signature = validator.verify(hash_file)
-    #
-    # element_0 = hash_file + '#' + signature
-    # print(element_0)
-
-    app_id = BoxContractMain.create_test_app()
-    BoxContractMain.create_box(app_id)
+    print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+                    (certifier_private_key, app_id_certifier, process_instance_id, hash_file)))
 
 
 if __name__ == "__main__":

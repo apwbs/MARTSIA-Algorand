@@ -1,8 +1,6 @@
 from algosdk.atomic_transaction_composer import *
 from pyteal import *
-from util import *
 from algosdk import account, mnemonic
-
 
 creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
 algod_address = "https://testnet-algorand.api.purestake.io/ps2"

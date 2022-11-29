@@ -2,6 +2,9 @@ from MessageContract import *
 from algosdk.atomic_transaction_composer import AtomicTransactionComposer
 import sys
 
+sys.path.insert(0, '../')
+from util import *
+
 # user declared account mnemonics
 creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
 algod_address = "https://testnet-algorand.api.purestake.io/ps2"

@@ -13,9 +13,6 @@ import subprocess
 from algosdk.encoding import decode_address, encode_address
 import ast
 
-# sys.path.insert(0, 'blockchain/')
-# from blockchain.retreiver import *
-
 app_id_box = config('APPLICATION_ID_BOX')
 
 authority1_mnemonic = config('AUTHORITY1_MNEMONIC')

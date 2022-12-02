@@ -39,23 +39,28 @@ def retrieve_data(authority_address):
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
     all_elements = all_elements.split('#')
-    public_parameters = all_elements[2]
-    return public_parameters
+    authorities = all_elements[0]
+    public_parameters = all_elements[3]
+    return authorities, public_parameters
 
 
 def generate_public_parameters():
+    check_authorities = []
     check_parameters = []
 
     data = retrieve_data(authority1_address)
-    check_parameters.append(data)
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
 
     data = retrieve_data(authority2_address)
-    check_parameters.append(data)
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
 
     data = retrieve_data(authority3_address)
-    check_parameters.append(data)
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
 
-    if len(set(check_parameters)) == 1:
+    if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
         with open('files/reader/public_parameters_reader.txt', 'wb') as ppw:
             ppw.write(getfile)
@@ -116,6 +121,6 @@ if __name__ == '__main__':
 
     process_instance_id = app_id_box
     # generate_public_parameters()
-    message_id = 15807291614623720630
-    slice_id = 3081925425294630327
+    message_id = 1409420741786935518
+    slice_id = 10569727779857469340
     main(groupObj, maabe, message_id, slice_id)

@@ -30,34 +30,39 @@ def retrieve_data(authority_address):
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
     all_elements = all_elements.split('#')
-    public_parameters = all_elements[2]
-    public_key = all_elements[3]
-    return public_parameters, public_key
+    authorities = all_elements[0]
+    public_parameters = all_elements[3]
+    public_key = all_elements[4]
+    return authorities, public_parameters, public_key
 
 
 def generate_pp_pk():
+    check_authorities = []
     check_parameters = []
 
     data = retrieve_data(authority1_address)
-    check_parameters.append(data[0])
-    pk1 = api.cat(data[1])
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
+    pk1 = api.cat(data[2])
     with open('files/data_owner/public_key_auth1.txt', 'wb') as ppw:
         ppw.write(pk1)
 
     data = retrieve_data(authority2_address)
-    check_parameters.append(data[0])
-    pk2 = api.cat(data[1])
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
+    pk2 = api.cat(data[2])
     with open('files/data_owner/public_key_auth2.txt', 'wb') as ppw:
         ppw.write(pk2)
 
     data = retrieve_data(authority3_address)
-    check_parameters.append(data[0])
-    pk3 = api.cat(data[1])
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
+    pk3 = api.cat(data[2])
     with open('files/data_owner/public_key_auth3.txt', 'wb') as ppw:
         ppw.write(pk3)
 
     # res = all(ele == check_parameters[0] for ele in check_parameters)  # another method to check if the list is equal
-    if len(set(check_parameters)) == 1:
+    if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
         with open('files/data_owner/public_parameters_reader.txt', 'wb') as ppw:
             ppw.write(getfile)

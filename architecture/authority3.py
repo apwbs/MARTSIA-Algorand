@@ -19,6 +19,29 @@ authority3_address = config('AUTHORITY3_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
 authority1_address = config('AUTHORITY1_ADDRESS')
 
+authorities_list = [authority1_address, authority2_address, authority3_address]
+
+
+def save_authorities_names(api):
+    name_file = 'files/authority3/authorities_names_au3.txt'
+    with open(name_file, 'w') as ua:
+        for i, addr in enumerate(authorities_list):
+            ua.write('identification: ' + 'authority ' + str(i+1) + '\n')
+            ua.write('name: ' + 'UT' + '\n')
+            ua.write('address: ' + addr + '\n\n')
+
+    new_file = api.add(name_file)
+    hash_file = new_file['Hash']
+    print(f'ipfs hash: {hash_file}')
+
+    authorities_name = hash_file + '#'
+    padding = '0' * 405
+    authorities_name_padded = authorities_name + padding
+
+    method = 'put_box'
+    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+        authority3_private_key, method, app_id_box, authorities_name_padded)))
+
 
 def initial_parameters_hashed(groupObj):
     g1_3 = groupObj.random(G1)
@@ -31,7 +54,11 @@ def initial_parameters_hashed(groupObj):
     with open('files/authority3/h2_3.txt', 'w') as h2_3w:
         h2_3w.write(h2_3)
 
-    hashed = h1_3 + ',' + h2_3 + '#'
+    method = 'read_box'
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
+                             app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    authorities = result[:47]
+    hashed = authorities + h1_3 + ',' + h2_3 + '#'
     padding = '0' * 275
     hashed_padded = hashed + padding
 
@@ -60,7 +87,7 @@ def initial_parameters():
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
     elements = g1_3_bytes.decode('utf-8') + ',' + g2_3_bytes.decode('utf-8') + '#'
-    hashed_elements = result[:130] + elements
+    hashed_elements = result[:177] + elements
     padding = '0' * 93
     hashed_elements_padded = hashed_elements + padding
 
@@ -94,10 +121,10 @@ def generate_public_parameters(groupObj, maabe, api):
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
     all_elements = all_elements.split('#')
-    g1g2_1_hashed = all_elements[0]
+    g1g2_1_hashed = all_elements[1]
     g1g2_1_hashed_split = g1g2_1_hashed.split(',')
 
-    g1g2_1 = all_elements[1]
+    g1g2_1 = all_elements[2]
     g1g2_1_split = g1g2_1.split(',')
 
     method = 'read_specific_box'
@@ -110,10 +137,10 @@ def generate_public_parameters(groupObj, maabe, api):
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
     all_elements = all_elements.split('#')
-    g1g2_2_hashed = all_elements[0]
+    g1g2_2_hashed = all_elements[1]
     g1g2_2_hashed_split = g1g2_2_hashed.split(',')
 
-    g1g2_2 = all_elements[1]
+    g1g2_2 = all_elements[2]
     g1g2_2_split = g1g2_2.split(',')
 
     g1_1 = g1g2_1_split[0]
@@ -152,7 +179,7 @@ def generate_public_parameters(groupObj, maabe, api):
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
-    hashed_elements_pp = result[:312] + hash_file + '#'
+    hashed_elements_pp = result[:359] + hash_file + '#'
     padding = '0' * 46
     hashed_elements_pp_padded = hashed_elements_pp + padding
 
@@ -195,7 +222,7 @@ def generate_pk_sk(groupObj, maabe, api):
     method = 'read_box'
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    hashed_elements_pp_pk = result[:359] + hash_file
+    hashed_elements_pp_pk = result[:406] + hash_file
 
     method = 'put_box'
     print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
@@ -207,6 +234,7 @@ def main():
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
+    # save_authorities_names(api)
     # initial_parameters_hashed(groupObj)
     # initial_parameters()
     # generate_public_parameters(groupObj, maabe, api)

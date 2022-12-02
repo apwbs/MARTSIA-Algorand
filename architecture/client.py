@@ -45,7 +45,7 @@ def send(msg):
 
 
 reader_address = '7M5UN2VQJV6GW7V43XZ2KGF5TIOHOTQ3OYQXDPZAQLZQFYQXU5FOJJHVMU'
-process_instance_id = 1369747727
+process_instance_id = 1376259296
 gid = "bob"
 # send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
 # send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)

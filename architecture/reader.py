@@ -72,7 +72,7 @@ def retrieve_public_parameters():
     return public_parameters
 
 
-def main(groupObj, maabe, message_id, slice_id):
+def main(groupObj, maabe, process_instance_id, message_id, slice_id):
     public_parameters = retrieve_public_parameters()
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
@@ -99,19 +99,21 @@ def main(groupObj, maabe, message_id, slice_id):
     ciphertext_link = retriever.retrieveMessage(app_id_messages, message_id)
     getfile = api.cat(ciphertext_link)
     ciphertext_dict = json.loads(getfile)
-    slice_check = ciphertext_dict['header']
-    for remaining in slice_check:
-        if remaining['Slice_id'] == slice_id:
-            test = remaining['CipheredKey'].encode('utf-8')
+    if ciphertext_dict['metadata']['process_instance_id'] == int(process_instance_id) \
+            and ciphertext_dict['metadata']['message_id'] == message_id:
+        slice_check = ciphertext_dict['header']
+        for remaining in slice_check:
+            if remaining['Slice_id'] == slice_id:
+                test = remaining['CipheredKey'].encode('utf-8')
 
-            ct = bytesToObject(test, groupObj)
-            v2 = maabe.decrypt(public_parameters, user_sk, ct)
-            v2 = groupObj.serialize(v2)
+                ct = bytesToObject(test, groupObj)
+                v2 = maabe.decrypt(public_parameters, user_sk, ct)
+                v2 = groupObj.serialize(v2)
 
-            dec_field = [cryptocode.decrypt(remaining['Fields'][x], str(v2)) for x in range(len(remaining['Fields']))]
-            decoded = [cryptocode.decrypt(ciphertext_dict['body'][x], str(v2)) for x in remaining['Fields']]
-            decoded_final = zip(dec_field, decoded)
-            print(dict(decoded_final))
+                dec_field = [cryptocode.decrypt(remaining['Fields'][x], str(v2)) for x in range(len(remaining['Fields']))]
+                decoded = [cryptocode.decrypt(ciphertext_dict['body'][x], str(v2)) for x in remaining['Fields']]
+                decoded_final = zip(dec_field, decoded)
+                print(dict(decoded_final))
 
 
 if __name__ == '__main__':
@@ -121,6 +123,6 @@ if __name__ == '__main__':
 
     process_instance_id = app_id_box
     # generate_public_parameters()
-    message_id = 1409420741786935518
-    slice_id = 10569727779857469340
-    main(groupObj, maabe, message_id, slice_id)
+    message_id = 288365882902714943
+    slice_id = 7530492511124342814
+    main(groupObj, maabe, process_instance_id, message_id, slice_id)

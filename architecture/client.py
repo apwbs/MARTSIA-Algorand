@@ -1,8 +1,9 @@
 import socket
 import ssl
+from decouple import config
 
 HEADER = 64
-PORT = 5060
+PORT = 5065
 FORMAT = 'utf-8'
 server_sni_hostname = 'example.com'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -36,20 +37,26 @@ def send(msg):
     conn.send(message)
     receive = conn.recv(6000).decode(FORMAT)
     if len(receive) != 0:
-        # with open("files/reader/user_sk1.txt", "w") as text_file:
+        # with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'w') as text_file:
         #     text_file.write(receive)
-        # with open("files/reader/user_sk2.txt", "w") as text_file:
+        # with open('files/reader/user_sk2_' + str(process_instance_id) + '.txt', 'w') as text_file:
         #     text_file.write(receive)
-        with open("files/reader/user_sk3.txt", "w") as text_file:
+        # with open('files/reader/user_sk3_' + str(process_instance_id) + '.txt', "w") as text_file:
+        #     text_file.write(receive)
+        with open('files/reader/user_sk4_' + str(process_instance_id) + '.txt', "w") as text_file:
             text_file.write(receive)
 
 
-reader_address = '7M5UN2VQJV6GW7V43XZ2KGF5TIOHOTQ3OYQXDPZAQLZQFYQXU5FOJJHVMU'
-process_instance_id = 1376259296
+manufacturer = config('READER_ADDRESS_MANUFACTURER')
+electronics = config('READER_ADDRESS_SUPPLIER1')
+mechanics = config('READER_ADDRESS_SUPPLIER2')
+reader_address = mechanics
+process_instance_id = 1387640806
 gid = "bob"
 # send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
 # send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
-send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
+# send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
+send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
 # exit()
 # input()
 

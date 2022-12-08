@@ -20,12 +20,13 @@ authority1_private_key = config('AUTHORITY1_PRIVATEKEY')
 authority1_address = config('AUTHORITY1_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
 authority3_address = config('AUTHORITY3_ADDRESS')
+authority4_address = config('AUTHORITY4_ADDRESS')
 
-authorities_list = [authority1_address, authority2_address, authority3_address]
+authorities_list = [authority1_address, authority2_address, authority3_address, authority4_address]
 
 
-def save_authorities_names(api):
-    name_file = 'files/authority1/authorities_names_au1.txt'
+def save_authorities_names(api, process_instance_id):
+    name_file = 'files/authority1/authorities_names_au1_' + str(process_instance_id) + '.txt'
     with open(name_file, 'w') as ua:
         for i, addr in enumerate(authorities_list):
             ua.write('identification: ' + 'authority ' + str(i+1) + '\n')
@@ -45,15 +46,15 @@ def save_authorities_names(api):
         authority1_private_key, method, app_id_box, authorities_name_padded)))
 
 
-def initial_parameters_hashed(groupObj):
+def initial_parameters_hashed(groupObj, process_instance_id):
     g1_1 = groupObj.random(G1)
     g2_1 = groupObj.random(G2)
     (h1_1, h2_1) = mpc_setup.commit(groupObj, g1_1, g2_1)
 
-    with open('files/authority1/h1_1.txt', 'w') as h1_1w:
+    with open('files/authority1/h1_1_' + str(process_instance_id) + '.txt', 'w') as h1_1w:
         h1_1w.write(h1_1)
 
-    with open('files/authority1/h2_1.txt', 'w') as h2_1w:
+    with open('files/authority1/h2_1_' + str(process_instance_id) + '.txt', 'w') as h2_1w:
         h2_1w.write(h2_1)
 
     method = 'read_box'
@@ -71,18 +72,18 @@ def initial_parameters_hashed(groupObj):
     g1_1_bytes = groupObj.serialize(g1_1)
     g2_1_bytes = groupObj.serialize(g2_1)
 
-    with open('files/authority1/g1_1.txt', 'wb') as g1_1w:
+    with open('files/authority1/g1_1_' + str(process_instance_id) + '.txt', 'wb') as g1_1w:
         g1_1w.write(g1_1_bytes)
 
-    with open('files/authority1/g2_1.txt', 'wb') as g2_1w:
+    with open('files/authority1/g2_1_' + str(process_instance_id) + '.txt', 'wb') as g2_1w:
         g2_1w.write(g2_1_bytes)
 
 
-def initial_parameters():
-    with open('files/authority1/g1_1.txt', 'rb') as g1:
+def initial_parameters(process_instance_id):
+    with open('files/authority1/g1_1_' + str(process_instance_id) + '.txt', 'rb') as g1:
         g1_1_bytes = g1.read()
 
-    with open('files/authority1/g2_1.txt', 'rb') as g2:
+    with open('files/authority1/g2_1_' + str(process_instance_id) + '.txt', 'rb') as g2:
         g2_1_bytes = g2.read()
 
     method = 'read_box'
@@ -98,19 +99,19 @@ def initial_parameters():
         authority1_private_key, method, app_id_box, hashed_elements_padded)))
 
 
-def generate_public_parameters(groupObj, maabe, api):
-    with open('files/authority1/g1_1.txt', 'rb') as g1:
+def generate_public_parameters(groupObj, maabe, api, process_instance_id):
+    with open('files/authority1/g1_1_' + str(process_instance_id) + '.txt', 'rb') as g1:
         g1_1_bytes = g1.read()
     g1_1 = groupObj.deserialize(g1_1_bytes)
 
-    with open('files/authority1/g2_1.txt', 'rb') as g2:
+    with open('files/authority1/g2_1_' + str(process_instance_id) + '.txt', 'rb') as g2:
         g2_1_bytes = g2.read()
     g2_1 = groupObj.deserialize(g2_1_bytes)
 
-    with open('files/authority1/h1_1.txt', 'r') as h1:
+    with open('files/authority1/h1_1_' + str(process_instance_id) + '.txt', 'r') as h1:
         h1 = h1.read()
 
-    with open('files/authority1/h2_1.txt', 'r') as h2:
+    with open('files/authority1/h2_1_' + str(process_instance_id) + '.txt', 'r') as h2:
         h2 = h2.read()
 
     method = 'read_specific_box'
@@ -144,6 +145,21 @@ def generate_public_parameters(groupObj, maabe, api):
     g1g2_3 = all_elements[2]
     g1g2_3_split = g1g2_3.split(',')
 
+    ####################
+    #######AUTH4########
+    ####################
+    box_name = base64.b64encode(decode_address(authority4_address))
+    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+                             app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    result = ast.literal_eval(result)
+    all_elements = base64.b64decode(result['value']).decode('utf-8')
+    all_elements = all_elements.split('#')
+    g1g2_4_hashed = all_elements[1]
+    g1g2_4_hashed_split = g1g2_4_hashed.split(',')
+
+    g1g2_4 = all_elements[2]
+    g1g2_4_split = g1g2_4.split(',')
+
     #############################
     ##########VALUES#############
     #############################
@@ -162,10 +178,17 @@ def generate_public_parameters(groupObj, maabe, api):
     g2_3 = bytes(g2_3, 'utf-8')
     g2_3 = groupObj.deserialize(g2_3)
 
-    hashes1 = [h1, g1g2_2_hashed_split[0], g1g2_3_hashed_split[0]]
-    hashes2 = [h2, g1g2_2_hashed_split[1], g1g2_3_hashed_split[1]]
-    com1 = [g1_1, g1_2, g1_3]
-    com2 = [g2_1, g2_2, g2_3]
+    g1_4 = g1g2_4_split[0]
+    g1_4 = bytes(g1_4, 'utf-8')
+    g1_4 = groupObj.deserialize(g1_4)
+    g2_4 = g1g2_4_split[1]
+    g2_4 = bytes(g2_4, 'utf-8')
+    g2_4 = groupObj.deserialize(g2_4)
+
+    hashes1 = [h1, g1g2_2_hashed_split[0], g1g2_3_hashed_split[0], g1g2_4_hashed_split[0]]
+    hashes2 = [h2, g1g2_2_hashed_split[1], g1g2_3_hashed_split[1], g1g2_4_hashed_split[1]]
+    com1 = [g1_1, g1_2, g1_3, g1_4]
+    com2 = [g2_1, g2_2, g2_3, g2_4]
     (value1, value2) = mpc_setup.generateParameters(groupObj, hashes1, hashes2, com1, com2)
 
     # setup
@@ -173,7 +196,7 @@ def generate_public_parameters(groupObj, maabe, api):
     public_parameters_reduced = dict(list(public_parameters.items())[0:3])
     pp_reduced = objectToBytes(public_parameters_reduced, groupObj)
 
-    name_file = 'files/authority1/public_parameters_authority1.txt'
+    name_file = 'files/authority1/public_parameters_authority1_' + str(process_instance_id) + '.txt'
     with open(name_file, 'wb') as ipfs:
         ipfs.write(pp_reduced)
 
@@ -194,17 +217,15 @@ def generate_public_parameters(groupObj, maabe, api):
         authority1_private_key, method, app_id_box, hashed_elements_pp_padded)))
 
 
-def retrieve_public_parameters():
-    with open('files/process_instance_id.txt', 'r') as cir:
-        process_instance_id = cir.read()
-    with open('files/authority1/public_parameters_authority1.txt', 'rb') as ppa2:
+def retrieve_public_parameters(process_instance_id):
+    with open('files/authority1/public_parameters_authority1_' + str(process_instance_id) + '.txt', 'rb') as ppa2:
         public_parameters = ppa2.read()
-    return public_parameters, process_instance_id
+    return public_parameters
 
 
-def generate_pk_sk(groupObj, maabe, api):
-    response = retrieve_public_parameters()
-    public_parameters = bytesToObject(response[0], groupObj)
+def generate_pk_sk(groupObj, maabe, api, process_instance_id):
+    response = retrieve_public_parameters(process_instance_id)
+    public_parameters = bytesToObject(response, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
     public_parameters["H"] = H
@@ -215,10 +236,10 @@ def generate_pk_sk(groupObj, maabe, api):
     pk1_bytes = objectToBytes(pk1, groupObj)
     sk1_bytes = objectToBytes(sk1, groupObj)
 
-    name_file = 'files/authority1/authority_ut_pk.txt'
+    name_file = 'files/authority1/authority_ut_pk_' + str(process_instance_id) + '.txt'
     with open(name_file, 'wb') as a1:
         a1.write(pk1_bytes)
-    with open('files/authority1/private_key_au1.txt', 'wb') as as1:
+    with open('files/authority1/private_key_au1_' + str(process_instance_id) + '.txt', 'wb') as as1:
         as1.write(sk1_bytes)
 
     new_file = api.add(name_file)
@@ -239,12 +260,13 @@ def main():
     groupObj = PairingGroup('SS512')
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+    process_instance_id = int(app_id_box)
 
-    # save_authorities_names(api)
-    # initial_parameters_hashed(groupObj)
-    # initial_parameters()
-    # generate_public_parameters(groupObj, maabe, api)
-    generate_pk_sk(groupObj, maabe, api)
+    # save_authorities_names(api, process_instance_id)
+    # initial_parameters_hashed(groupObj, process_instance_id)
+    # initial_parameters(process_instance_id)
+    # generate_public_parameters(groupObj, maabe, api, process_instance_id)
+    generate_pk_sk(groupObj, maabe, api, process_instance_id)
 
     # test = api.name.publish('/ipfs/' + hash_file)
     # print(test)

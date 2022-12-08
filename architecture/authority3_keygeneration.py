@@ -10,8 +10,8 @@ import retriever
 app_id_attribute = config('APPLICATION_ID_CERTIFIER')
 
 
-def retrieve_public_parameters():
-    with open('files/authority3/public_parameters_authority3.txt', 'rb') as ppa3:
+def retrieve_public_parameters(process_instance_id):
+    with open('files/authority3/public_parameters_authority3_' + str(process_instance_id) + '.txt', 'rb') as ppa3:
         public_parameters = ppa3.read()
     return public_parameters
 
@@ -21,14 +21,14 @@ def generate_user_key(gid, process_instance_id, reader_address):
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-    response = retrieve_public_parameters()
+    response = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(response, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
     public_parameters["H"] = H
     public_parameters["F"] = F
 
-    with open('files/authority3/private_key_ot3.txt', 'rb') as sk3r:
+    with open('files/authority3/private_key_ot3_' + str(process_instance_id) + '.txt', 'rb') as sk3r:
         sk3 = sk3r.read()
     sk3 = bytesToObject(sk3, groupObj)
 

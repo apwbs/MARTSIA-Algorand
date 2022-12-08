@@ -19,6 +19,7 @@ app_id_messages = config('APPLICATION_ID_MESSAGES')
 authority1_address = config('AUTHORITY1_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
 authority3_address = config('AUTHORITY3_ADDRESS')
+authority4_address = config('AUTHORITY4_ADDRESS')
 data_owner_private_key = config('DATAOWNER_PRIVATEKEY')
 
 
@@ -36,7 +37,7 @@ def retrieve_data(authority_address):
     return authorities, public_parameters, public_key
 
 
-def generate_pp_pk():
+def generate_pp_pk(process_instance_id):
     check_authorities = []
     check_parameters = []
 
@@ -44,65 +45,80 @@ def generate_pp_pk():
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk1 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth1.txt', 'wb') as ppw:
+    with open('files/data_owner/public_key_auth1_' + str(process_instance_id) + '.txt', 'wb') as ppw:
         ppw.write(pk1)
 
     data = retrieve_data(authority2_address)
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk2 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth2.txt', 'wb') as ppw:
+    with open('files/data_owner/public_key_auth2_' + str(process_instance_id) + '.txt', 'wb') as ppw:
         ppw.write(pk2)
 
     data = retrieve_data(authority3_address)
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk3 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth3.txt', 'wb') as ppw:
+    with open('files/data_owner/public_key_auth3_' + str(process_instance_id) + '.txt', 'wb') as ppw:
         ppw.write(pk3)
+
+    data = retrieve_data(authority4_address)
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
+    pk4 = api.cat(data[2])
+    with open('files/data_owner/public_key_auth4_' + str(process_instance_id) + '.txt', 'wb') as ppw:
+        ppw.write(pk4)
 
     # res = all(ele == check_parameters[0] for ele in check_parameters)  # another method to check if the list is equal
     if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
-        with open('files/data_owner/public_parameters_reader.txt', 'wb') as ppw:
+        with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
             ppw.write(getfile)
 
 
-def retrieve_public_parameters():
-    with open('files/data_owner/public_parameters_reader.txt', 'rb') as ppr:
+def retrieve_public_parameters(process_instance_id):
+    with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
         public_parameters = ppr.read()
     return public_parameters
 
 
 def main(groupObj, maabe, api, process_instance_id):
-    public_parameters = retrieve_public_parameters()
+    public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
     public_parameters["H"] = H
     public_parameters["F"] = F
 
-    with open('files/data_owner/public_key_auth1.txt', 'rb') as pk1r:
+    with open('files/data_owner/public_key_auth1_' + str(process_instance_id) + '.txt', 'rb') as pk1r:
         pk1 = pk1r.read()
     pk1 = bytesToObject(pk1, groupObj)
 
-    with open('files/data_owner/public_key_auth2.txt', 'rb') as pk2r:
+    with open('files/data_owner/public_key_auth2_' + str(process_instance_id) + '.txt', 'rb') as pk2r:
         pk2 = pk2r.read()
     pk2 = bytesToObject(pk2, groupObj)
 
-    with open('files/data_owner/public_key_auth3.txt', 'rb') as pk3r:
+    with open('files/data_owner/public_key_auth3_' + str(process_instance_id) + '.txt', 'rb') as pk3r:
         pk3 = pk3r.read()
     pk3 = bytesToObject(pk3, groupObj)
 
+    with open('files/data_owner/public_key_auth4_' + str(process_instance_id) + '.txt', 'rb') as pk4r:
+        pk4 = pk4r.read()
+    pk4 = bytesToObject(pk4, groupObj)
+
     # public keys authorities
-    pk = {'UT': pk1, 'OU': pk2, 'OT': pk3}
+    pk = {'UT': pk1, 'OU': pk2, 'OT': pk3, 'TU': pk4}
 
     f = open('files/data.json')
     data = json.load(f)
-    access_policy = ['(STUDENT@UT and STUDENT@OU and STUDENT@OT)',
-                     '(STUDENT@UT and MASTERS@OU)']
+    access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+                     'SUPPLIER@OU)',
+                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     'SUPPLIER@OU and ELECTRONICS@OT)',
+                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     'SUPPLIER@OU and MECHANICS@TU)']
 
-    entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev']]
+    entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
 
     keys = []
     header = []
@@ -163,6 +179,6 @@ if __name__ == '__main__':
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-    process_instance_id = app_id_box
-    # generate_pp_pk()
+    process_instance_id = int(app_id_box)
+    # generate_pp_pk(process_instance_id)
     main(groupObj, maabe, api, process_instance_id)

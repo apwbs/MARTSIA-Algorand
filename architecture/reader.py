@@ -18,6 +18,7 @@ app_id_messages = config('APPLICATION_ID_MESSAGES')
 authority1_address = config('AUTHORITY1_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
 authority3_address = config('AUTHORITY3_ADDRESS')
+authority4_address = config('AUTHORITY4_ADDRESS')
 
 
 def merge_dicts(*dict_args):
@@ -60,20 +61,24 @@ def generate_public_parameters():
     check_authorities.append(data[0])
     check_parameters.append(data[1])
 
+    data = retrieve_data(authority4_address)
+    check_authorities.append(data[0])
+    check_parameters.append(data[1])
+
     if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
-        with open('files/reader/public_parameters_reader.txt', 'wb') as ppw:
+        with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
             ppw.write(getfile)
 
 
-def retrieve_public_parameters():
-    with open('files/reader/public_parameters_reader.txt', 'rb') as ppr:
+def retrieve_public_parameters(process_instance_id):
+    with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
         public_parameters = ppr.read()
     return public_parameters
 
 
 def main(groupObj, maabe, process_instance_id, message_id, slice_id):
-    public_parameters = retrieve_public_parameters()
+    public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
     F = lambda x: self.group.hash(x, G2)
@@ -81,19 +86,23 @@ def main(groupObj, maabe, process_instance_id, message_id, slice_id):
     public_parameters["F"] = F
 
     # keygen Bob
-    with open('files/reader/user_sk1.txt', 'r') as us1:
+    with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'r') as us1:
         user_sk1 = us1.read()
     user_sk1 = bytesToObject(user_sk1, groupObj)
 
-    with open('files/reader/user_sk2.txt', 'r') as us2:
+    with open('files/reader/user_sk2_' + str(process_instance_id) + '.txt', 'r') as us2:
         user_sk2 = us2.read()
     user_sk2 = bytesToObject(user_sk2, groupObj)
 
-    with open('files/reader/user_sk3.txt', 'r') as us3:
+    with open('files/reader/user_sk3_' + str(process_instance_id) + '.txt', 'r') as us3:
         user_sk3 = us3.read()
     user_sk3 = bytesToObject(user_sk3, groupObj)
 
-    user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3)}
+    with open('files/reader/user_sk4_' + str(process_instance_id) + '.txt', 'r') as us4:
+        user_sk4 = us4.read()
+    user_sk4 = bytesToObject(user_sk4, groupObj)
+
+    user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
 
     # decrypt
     ciphertext_link = retriever.retrieveMessage(app_id_messages, message_id)
@@ -123,6 +132,6 @@ if __name__ == '__main__':
 
     process_instance_id = app_id_box
     # generate_public_parameters()
-    message_id = 288365882902714943
-    slice_id = 7530492511124342814
+    message_id = 12270749954880977020
+    slice_id = 6861370071749750925
     main(groupObj, maabe, process_instance_id, message_id, slice_id)

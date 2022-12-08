@@ -2,7 +2,7 @@ from algosdk.v2client import algod
 from algosdk import account, mnemonic
 from algosdk import transaction
 
-algod_address = "https://betanet-algorand.api.purestake.io/ps2"
+algod_address = "https://testnet-algorand.api.purestake.io/ps2"
 algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
 headers = {
    "X-API-Key": algod_token,

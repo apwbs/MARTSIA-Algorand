@@ -11,8 +11,8 @@ app_id_attribute = config('APPLICATION_ID_CERTIFIER')
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/authority1/public_parameters_authority1_' + str(process_instance_id) + '.txt', 'rb') as ppa2:
-        public_parameters = ppa2.read()
+    with open('files/authority4/public_parameters_authority4_' + str(process_instance_id) + '.txt', 'rb') as ppa4:
+        public_parameters = ppa4.read()
     return public_parameters
 
 
@@ -28,17 +28,17 @@ def generate_user_key(gid, process_instance_id, reader_address):
     public_parameters["H"] = H
     public_parameters["F"] = F
 
-    with open('files/authority1/private_key_au1_' + str(process_instance_id) + '.txt', 'rb') as sk1r:
-        sk1 = sk1r.read()
-    sk1 = bytesToObject(sk1, groupObj)
+    with open('files/authority4/private_key_au4_' + str(process_instance_id) + '.txt', 'rb') as sk4r:
+        sk4 = sk4r.read()
+    sk4 = bytesToObject(sk4, groupObj)
 
     # keygen Bob
     attributes_ipfs_link = retriever.retrieveReaderAttributes(app_id_attribute, process_instance_id)
     getfile = api.cat(attributes_ipfs_link)
     getfile = getfile.split(b'\n')
     attributes_dict = json.loads(getfile[1].decode('utf-8'))
-    user_attr1 = attributes_dict[reader_address]
-    user_attr1 = [k for k in user_attr1 if k.endswith('@UT')]
-    user_sk1 = maabe.multiple_attributes_keygen(public_parameters, sk1, gid, user_attr1)
-    user_sk1_bytes = objectToBytes(user_sk1, groupObj)
-    return user_sk1_bytes
+    user_attr4 = attributes_dict[reader_address]
+    user_attr4 = [k for k in user_attr4 if k.endswith('@TU')]
+    user_sk4 = maabe.multiple_attributes_keygen(public_parameters, sk4, gid, user_attr4)
+    user_sk4_bytes = objectToBytes(user_sk4, groupObj)
+    return user_sk4_bytes

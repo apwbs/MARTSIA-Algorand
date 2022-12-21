@@ -29,7 +29,7 @@ def save_authorities_names(api, process_instance_id):
     name_file = 'files/authority1/authorities_names_au1_' + str(process_instance_id) + '.txt'
     with open(name_file, 'w') as ua:
         for i, addr in enumerate(authorities_list):
-            ua.write('identification: ' + 'authority ' + str(i+1) + '\n')
+            ua.write('identification: ' + 'authority ' + str(i + 1) + '\n')
             ua.write('name: ' + 'UT' + '\n')
             ua.write('address: ' + addr + '\n\n')
 
@@ -161,7 +161,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     g1g2_4_split = g1g2_4.split(',')
 
     #############################
-    ##########VALUES#############
+    ##########ELEMENTS###########
     #############################
 
     g1_2 = g1g2_2_split[0]
@@ -184,6 +184,10 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     g2_4 = g1g2_4_split[1]
     g2_4 = bytes(g2_4, 'utf-8')
     g2_4 = groupObj.deserialize(g2_4)
+
+    #############################
+    ##########VALUES#############
+    #############################
 
     hashes1 = [h1, g1g2_2_hashed_split[0], g1g2_3_hashed_split[0], g1g2_4_hashed_split[0]]
     hashes2 = [h2, g1g2_2_hashed_split[1], g1g2_3_hashed_split[1], g1g2_4_hashed_split[1]]
@@ -265,7 +269,7 @@ def main():
     # save_authorities_names(api, process_instance_id)
     # initial_parameters_hashed(groupObj, process_instance_id)
     # initial_parameters(process_instance_id)
-    # generate_public_parameters(groupObj, maabe, api, process_instance_id)
+    generate_public_parameters(groupObj, maabe, api, process_instance_id)
     generate_pk_sk(groupObj, maabe, api, process_instance_id)
 
     # test = api.name.publish('/ipfs/' + hash_file)

@@ -72,12 +72,12 @@ def generate_pp_pk(process_instance_id):
     # res = all(ele == check_parameters[0] for ele in check_parameters)  # another method to check if the list is equal
     if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
-        with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
+        with open('files/data_owner/public_parameters_dataowner_' + str(process_instance_id) + '.txt', 'wb') as ppw:
             ppw.write(getfile)
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
+    with open('files/data_owner/public_parameters_dataowner_' + str(process_instance_id) + '.txt', 'rb') as ppr:
         public_parameters = ppr.read()
     return public_parameters
 

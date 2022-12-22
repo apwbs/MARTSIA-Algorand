@@ -132,6 +132,6 @@ if __name__ == '__main__':
 
     process_instance_id = app_id_box
     # generate_public_parameters()
-    message_id = 12270749954880977020
-    slice_id = 6861370071749750925
+    message_id = 11667089183188756151
+    slice_id = 7894483770578836360
     main(groupObj, maabe, process_instance_id, message_id, slice_id)

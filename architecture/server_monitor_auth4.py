@@ -2,7 +2,7 @@ from algosdk.v2client import indexer
 import base64
 import time
 from decouple import config
-import authority1_keygeneration
+import authority4_keygeneration
 import rsa
 import json
 import retriever
@@ -13,15 +13,6 @@ import ipfshttpclient
 
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
-
-authority1_address = config('AUTHORITY1_ADDRESS')
-authority1_mnemonic = config('AUTHORITY1_MNEMONIC')
-
-authority2_address = config('AUTHORITY2_ADDRESS')
-authority2_mnemonic = config('AUTHORITY2_MNEMONIC')
-
-authority3_address = config('AUTHORITY3_ADDRESS')
-authority3_mnemonic = config('AUTHORITY3_MNEMONIC')
 
 authority4_address = config('AUTHORITY4_ADDRESS')
 authority4_mnemonic = config('AUTHORITY4_MNEMONIC')
@@ -41,7 +32,7 @@ headers = {
 }
 
 
-creator_mnemonic = authority1_mnemonic
+creator_mnemonic = authority4_mnemonic
 
 
 def get_private_key_from_mnemonic(mn):
@@ -76,7 +67,7 @@ def generate_key(x):
     gid = base64.b64decode(x['note']).decode('utf-8').split(',')[1]
     process_instance_id = int(base64.b64decode(x['note']).decode('utf-8').split(',')[2])
     reader_address = x['sender']
-    key = authority1_keygeneration.generate_user_key(gid, process_instance_id, reader_address)
+    key = authority4_keygeneration.generate_user_key(gid, process_instance_id, reader_address)
     cipher_generated_key(reader_address, process_instance_id, key)
 
 
@@ -105,11 +96,11 @@ def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
 
 
 def transactions_monitoring():
-    min_round = 26453840
+    min_round = 26453845
     transactions = []
     note = 'generate your part of my key'
     while True:
-        response = indexer_client.search_transactions_by_address(address=authority1_address, min_round=min_round,
+        response = indexer_client.search_transactions_by_address(address=authority4_address, min_round=min_round,
                                                                  txn_type='pay', max_amount=0)
         for tx in response['transactions']:
             if tx['id'] not in transactions and 'note' in tx:

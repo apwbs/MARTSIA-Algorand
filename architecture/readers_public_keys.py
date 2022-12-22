@@ -13,8 +13,8 @@ electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
 mechanics_address = config('READER_ADDRESS_SUPPLIER2')
 mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
 
-reader_address = manufacturer_address
-private_key = manufacturer_private_key
+reader_address = electronics_address
+private_key = electronics_private_key
 
 
 def generate_keys():
@@ -24,7 +24,7 @@ def generate_keys():
 
     name_file1 = 'files/keys_readers/private_key_' + str(reader_address) + '.txt'
     with open(name_file1, 'w') as ipfs:
-        ipfs.write('reader_address: ' + reader_address + '\n')
+        ipfs.write('reader_address: ' + reader_address + '###')
         ipfs.write(privateKey_store)
 
     name_file = 'files/keys_readers/public_key_' + str(reader_address) + '.txt'

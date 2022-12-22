@@ -3,11 +3,28 @@ import base64
 import time
 from decouple import config
 import authority1_keygeneration
+import rsa
+import json
+import retriever
+from algosdk.v2client import algod
+from algosdk import mnemonic, account
+from algosdk.future.transaction import PaymentTxn
+import ipfshttpclient
+
+api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
 
 authority1_address = config('AUTHORITY1_ADDRESS')
+authority1_mnemonic = config('AUTHORITY1_MNEMONIC')
+
 authority2_address = config('AUTHORITY2_ADDRESS')
+authority2_mnemonic = config('AUTHORITY2_MNEMONIC')
+
 authority3_address = config('AUTHORITY3_ADDRESS')
+authority3_mnemonic = config('AUTHORITY3_MNEMONIC')
+
 authority4_address = config('AUTHORITY4_ADDRESS')
+authority4_mnemonic = config('AUTHORITY4_MNEMONIC')
 
 indexer_address = "https://testnet-algorand.api.purestake.io/idx2"
 indexer_token = ""
@@ -17,17 +34,93 @@ headers = {
 
 indexer_client = indexer.IndexerClient(indexer_token, indexer_address, headers)
 
+algod_address = "https://testnet-algorand.api.purestake.io/ps2"
+algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+headers = {
+    "X-API-Key": algod_token,
+}
+
+
+creator_mnemonic = authority1_mnemonic
+
+
+def get_private_key_from_mnemonic(mn):
+    private_key = mnemonic.to_private_key(mn)
+    return private_key
+
+
+def send_ipfs_link(reader_address, process_instance_id, hash_file):
+    algod_client = algod.AlgodClient(algod_token, algod_address, headers)
+
+    private_key = get_private_key_from_mnemonic(creator_mnemonic)
+    my_address = account.address_from_private_key(private_key)
+    print("My address: {}".format(my_address))
+    params = algod_client.suggested_params()
+    # comment out the next two (2) lines to use suggested fees
+    # params.flat_fee = True
+    # params.fee = 1000
+    note = hash_file + ',' + str(process_instance_id)
+    note_encoded = note.encode()
+    receiver = reader_address
+
+    unsigned_txn = PaymentTxn(my_address, params, receiver, 0, None, note_encoded)
+
+    # sign transaction
+    signed_txn = unsigned_txn.sign(private_key)
+    # send transaction
+    txid = algod_client.send_transaction(signed_txn)
+    print("Send transaction with txID: {}".format(txid))
+
 
 def generate_key(x):
     gid = base64.b64decode(x['note']).decode('utf-8').split(',')[1]
     process_instance_id = int(base64.b64decode(x['note']).decode('utf-8').split(',')[2])
     reader_address = x['sender']
     key = authority1_keygeneration.generate_user_key(gid, process_instance_id, reader_address)
-    print(key)
+    cipher_generated_key(reader_address, process_instance_id, key)
+
+
+def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
+    public_key_ipfs_link = retriever.retrieveReaderPublicKey(app_id_pk_readers, reader_address)
+    getfile = api.cat(public_key_ipfs_link)
+    getfile = getfile.split(b'###')
+    if getfile[0].split(b': ')[1].decode('utf-8') == reader_address:
+        publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1])
+
+        info = [generated_ma_key[i:i + 117] for i in range(0, len(generated_ma_key), 117)]
+
+        name_file = 'files/keys_readers/generated_key_ciphered_' + str(reader_address) + '_' \
+                    + str(process_instance_id) + '.txt'
+
+        for part in info:
+            crypto = rsa.encrypt(part, publicKey_usable)
+            with open(name_file, 'ab') as ipfs:
+                ipfs.write(crypto)
+
+        new_file = api.add(name_file)
+        hash_file = new_file['Hash']
+        print(f'ipfs hash: {hash_file}')
+
+        send_ipfs_link(reader_address, process_instance_id, hash_file)
+
+        # with open(name_file, 'rb') as sk2r:
+        #     message_ciphered = sk2r.read()
+        #
+        # info2 = [message_ciphered[i:i + 128] for i in range(0, len(message_ciphered), 128)]
+        # final_bytes = b''
+        #
+        # with open('files/keys_readers/private_key_' + str(reader_address) + '.txt', 'rb') as sk1r:
+        #     sk1 = sk1r.read()
+        # privateKey_usable = rsa.PrivateKey.load_pkcs1(sk1)
+        #
+        # for j in info2:
+        #     message = rsa.decrypt(j, privateKey_usable)
+        #     final_bytes = final_bytes + message
+        # print(final_bytes)
 
 
 def transactions_monitoring():
-    min_round = 26444819
+    min_round = 26448997
     transactions = []
     note = 'generate your part of my key'
     while True:

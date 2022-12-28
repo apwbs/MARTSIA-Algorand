@@ -17,15 +17,6 @@ app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
 authority1_address = config('AUTHORITY1_ADDRESS')
 authority1_mnemonic = config('AUTHORITY1_MNEMONIC')
 
-authority2_address = config('AUTHORITY2_ADDRESS')
-authority2_mnemonic = config('AUTHORITY2_MNEMONIC')
-
-authority3_address = config('AUTHORITY3_ADDRESS')
-authority3_mnemonic = config('AUTHORITY3_MNEMONIC')
-
-authority4_address = config('AUTHORITY4_ADDRESS')
-authority4_mnemonic = config('AUTHORITY4_MNEMONIC')
-
 indexer_address = "https://testnet-algorand.api.purestake.io/idx2"
 indexer_token = ""
 headers = {

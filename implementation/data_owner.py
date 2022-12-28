@@ -169,7 +169,7 @@ def main(groupObj, maabe, api, process_instance_id):
     new_file = api.add(name_file)
     hash_file = new_file['Hash']
     print(f'ipfs hash: {hash_file}')
-
+    exit()
     print(os.system('python3.11 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
         data_owner_private_key, app_id_messages, message_id, hash_file)))
 

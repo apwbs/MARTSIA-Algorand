@@ -33,7 +33,8 @@ def retrieveMessage(application_id, message_id):
         if base64.b64decode(part[1]['key']) == b'msg_id':
             if 'bytes' in part[1]['value']:
                 if int(base64.b64decode(part[1]['value']['bytes'])) == int(message_id):
-                    return base64.b64decode(part[0]['value']['bytes']).decode('utf-8')
+                    return base64.b64decode(part[0]['value']['bytes']).decode('utf-8'), \
+                        response['transactions'][i]['sender']
 
 
 def retrieveReaderPublicKey(application_id, reader_address):

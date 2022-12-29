@@ -105,11 +105,14 @@ def main(groupObj, maabe, process_instance_id, message_id, slice_id):
     user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
 
     # decrypt
-    ciphertext_link = retriever.retrieveMessage(app_id_messages, message_id)
+    response = retriever.retrieveMessage(app_id_messages, message_id)
+    ciphertext_link = response[0]
     getfile = api.cat(ciphertext_link)
     ciphertext_dict = json.loads(getfile)
+    sender = response[1]
     if ciphertext_dict['metadata']['process_instance_id'] == int(process_instance_id) \
-            and ciphertext_dict['metadata']['message_id'] == message_id:
+            and ciphertext_dict['metadata']['message_id'] == message_id \
+            and ciphertext_dict['metadata']['sender'] == sender:
         slice_check = ciphertext_dict['header']
         for remaining in slice_check:
             if remaining['Slice_id'] == slice_id:

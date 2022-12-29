@@ -1,3 +1,3 @@
 # MARTSIA
 
-TODO: add sender check in reader (MARTSIA-Algorand main, MARTISA-Ethereum both)
+TODO: add sender check in reader (MARTISA-Ethereum both)

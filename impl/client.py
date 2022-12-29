@@ -26,8 +26,8 @@ conn = context.wrap_socket(s, server_side=False, server_hostname=server_sni_host
 conn.connect(ADDR)
 
 
-def sign_number():
-    with open('files/reader/number to sign.txt', 'r') as r:
+def sign_number(authority_invoked):
+    with open('files/reader/number to sign_' + authority_invoked + '.txt', 'r') as r:
         number_to_sign = r.read()
     number_to_sign = int(number_to_sign)
 
@@ -58,11 +58,11 @@ def send(msg):
     conn.send(message)
     receive = conn.recv(6000).decode(FORMAT)
     if len(receive) != 0:
-        # if receive[:15] == 'number to sign:':
-        #     with open('files/reader/number to sign.txt', "w") as text_file:
-        #         text_file.write(receive[16:])
-        with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'w') as text_file:
-            text_file.write(receive)
+        if receive[:15] == 'number to sign:':
+            with open('files/reader/number to sign_' + authority + '.txt', "w") as text_file:
+                text_file.write(receive[16:])
+        # with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'w') as text_file:
+        #     text_file.write(receive)
         # with open('files/reader/user_sk2_' + str(process_instance_id) + '.txt', 'w') as text_file:
         #     text_file.write(receive)
         # with open('files/reader/user_sk3_' + str(process_instance_id) + '.txt', "w") as text_file:
@@ -78,15 +78,23 @@ reader_address = manufacturer
 process_instance_id = 1387640806
 gid = "bob"
 
-# send("Auth1 - Start handshake||" + reader_address)
+authority = 'Auth1'
 
-signature_sending = sign_number()
+# send("Auth1 - Start handshake||" + reader_address)
+# send("Auth2 - Start handshake||" + reader_address)
+# send("Auth3 - Start handshake||" + reader_address)
+# send("Auth4 - Start handshake||" + reader_address)
+
+signature_sending = sign_number(authority)
 
 send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
      str(signature_sending))
-# send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
-# send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
-# send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address)
+# send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+#      str(signature_sending))
+# send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+#      str(signature_sending))
+# send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+#      str(signature_sending))
 # exit()
 # input()
 

@@ -144,6 +144,7 @@ def main(groupObj, maabe, api, process_instance_id):
         ciphered_key_bytes = objectToBytes(ciphered_key, groupObj)
         ciphered_key_bytes_string = ciphered_key_bytes.decode('utf-8')
 
+        ## Possibility to clean the code here. This check can be done outside the 'for loop'
         if len(access_policy) == len(entries) == 1:
             dict_pol = {'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
             header.append(dict_pol)

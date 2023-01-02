@@ -171,9 +171,9 @@ def main(groupObj, maabe, api, process_instance_id):
     now = int(now.strftime("%Y%m%d%H%M%S%f"))
     random.seed(now)
     message_id = random.randint(1, 2 ** 64)
-
     metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
                 'message_id': message_id}
+    print(f'message id: {message_id}')
 
     json_total = {'metadata': metadata, 'header': header, 'body': json_file_ciphered}
 

@@ -168,6 +168,7 @@ def main(groupObj, maabe, api, process_instance_id):
     if len(access_policy) == len(entries) == 1:
         metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
                     'message_id': slice_id}
+        print(f'message id: {slice_id}')
     else:
         now = datetime.now()
         now = int(now.strftime("%Y%m%d%H%M%S%f"))

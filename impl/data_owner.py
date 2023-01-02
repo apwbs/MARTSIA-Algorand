@@ -144,15 +144,13 @@ def main(groupObj, maabe, api, process_instance_id):
         ciphered_key_bytes = objectToBytes(ciphered_key, groupObj)
         ciphered_key_bytes_string = ciphered_key_bytes.decode('utf-8')
 
-        now = datetime.now()
-        now = int(now.strftime("%Y%m%d%H%M%S%f"))
-        random.seed(now)
-        slice_id = random.randint(1, 2 ** 64)
-
         if len(access_policy) == len(entries) == 1:
             dict_pol = {'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
-            print(f'slice id == message id: {slice_id}')
         else:
+            now = datetime.now()
+            now = int(now.strftime("%Y%m%d%H%M%S%f"))
+            random.seed(now)
+            slice_id = random.randint(1, 2 ** 64)
             dict_pol = {'Slice_id': slice_id, 'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
             print(f'slice id {i}: {slice_id}')
         header.append(dict_pol)

@@ -85,6 +85,7 @@ def retrieve_public_parameters(process_instance_id):
 
 
 def main(groupObj, maabe, api, process_instance_id):
+    global slice_id
     public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
@@ -113,14 +114,23 @@ def main(groupObj, maabe, api, process_instance_id):
 
     f = open('files/data.json')
     data = json.load(f)
-    access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
-                     'SUPPLIER@OU)',
-                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
-                     'SUPPLIER@OU and ELECTRONICS@OT)',
-                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
-                     'SUPPLIER@OU and MECHANICS@TU)']
+    # access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+    #                  'SUPPLIER@OU)',
+    #                  '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+    #                  'SUPPLIER@OU and ELECTRONICS@OT)',
+    #                  '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+    #                  'SUPPLIER@OU and MECHANICS@TU)']
+    #
+    # entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
 
-    entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
+    access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+                     'SUPPLIER@OU)']
+
+    entries = [list(data.keys())]
+
+    if len(access_policy) != len(entries):
+        print('ERROR: The number of policies and entries is different')
+        exit()
 
     keys = []
     header = []
@@ -134,13 +144,16 @@ def main(groupObj, maabe, api, process_instance_id):
         ciphered_key_bytes = objectToBytes(ciphered_key, groupObj)
         ciphered_key_bytes_string = ciphered_key_bytes.decode('utf-8')
 
-        now = datetime.now()
-        now = int(now.strftime("%Y%m%d%H%M%S%f"))
-        random.seed(now)
-        slice_id = random.randint(1, 2 ** 64)
-        print(f'slice id {i}: {slice_id}')
+        if len(access_policy) == len(entries) == 1:
+            dict_pol = {'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
+        else:
+            now = datetime.now()
+            now = int(now.strftime("%Y%m%d%H%M%S%f"))
+            random.seed(now)
+            slice_id = random.randint(1, 2 ** 64)
+            dict_pol = {'Slice_id': slice_id, 'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
+            print(f'slice id {i}: {slice_id}')
 
-        dict_pol = {'Slice_id': slice_id, 'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
         header.append(dict_pol)
 
     json_file_ciphered = {}
@@ -153,12 +166,17 @@ def main(groupObj, maabe, api, process_instance_id):
             json_file_ciphered[cipher_field] = cipher
         header[i]['Fields'] = ciphered_fields
 
-    now = datetime.now()
-    now = int(now.strftime("%Y%m%d%H%M%S%f"))
-    random.seed(now)
-    message_id = random.randint(1, 2 ** 64)
-    metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id), 'message_id': message_id}
-    print(f'message id: {message_id}')
+    if len(access_policy) == len(entries) == 1:
+        metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
+                    'message_id': slice_id}
+    else:
+        now = datetime.now()
+        now = int(now.strftime("%Y%m%d%H%M%S%f"))
+        random.seed(now)
+        message_id = random.randint(1, 2 ** 64)
+        metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
+                    'message_id': message_id}
+        print(f'message id: {message_id}')
 
     json_total = {'metadata': metadata, 'header': header, 'body': json_file_ciphered}
 
@@ -173,7 +191,7 @@ def main(groupObj, maabe, api, process_instance_id):
     print(f'ipfs hash: {hash_file}')
 
     print(os.system('python3.11 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
-        data_owner_private_key, app_id_messages, message_id, hash_file)))
+        data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))
 
 
 if __name__ == '__main__':

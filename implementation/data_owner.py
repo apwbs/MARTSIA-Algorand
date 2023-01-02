@@ -146,6 +146,7 @@ def main(groupObj, maabe, api, process_instance_id):
 
         if len(access_policy) == len(entries) == 1:
             dict_pol = {'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
+            header.append(dict_pol)
         else:
             now = datetime.now()
             now = int(now.strftime("%Y%m%d%H%M%S%f"))
@@ -153,8 +154,7 @@ def main(groupObj, maabe, api, process_instance_id):
             slice_id = random.randint(1, 2 ** 64)
             dict_pol = {'Slice_id': slice_id, 'CipheredKey': ciphered_key_bytes_string, 'Fields': entries[i]}
             print(f'slice id {i}: {slice_id}')
-
-        header.append(dict_pol)
+            header.append(dict_pol)
 
     json_file_ciphered = {}
     for i, entry in enumerate(entries):
@@ -166,18 +166,13 @@ def main(groupObj, maabe, api, process_instance_id):
             json_file_ciphered[cipher_field] = cipher
         header[i]['Fields'] = ciphered_fields
 
-    if len(access_policy) == len(entries) == 1:
-        metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
-                    'message_id': slice_id}
-        print(f'message id: {slice_id}')
-    else:
-        now = datetime.now()
-        now = int(now.strftime("%Y%m%d%H%M%S%f"))
-        random.seed(now)
-        message_id = random.randint(1, 2 ** 64)
-        metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
-                    'message_id': message_id}
-        print(f'message id: {message_id}')
+    now = datetime.now()
+    now = int(now.strftime("%Y%m%d%H%M%S%f"))
+    random.seed(now)
+    message_id = random.randint(1, 2 ** 64)
+
+    metadata = {'sender': data_owner_address, 'process_instance_id': int(process_instance_id),
+                'message_id': message_id}
 
     json_total = {'metadata': metadata, 'header': header, 'body': json_file_ciphered}
 

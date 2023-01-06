@@ -12,6 +12,7 @@ import base64
 import subprocess
 from algosdk.encoding import decode_address, encode_address
 import ast
+import sqlite3
 
 app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
@@ -23,6 +24,10 @@ authority4_address = config('AUTHORITY4_ADDRESS')
 
 data_owner_address = config('DATAOWNER_ADDRESS')
 data_owner_private_key = config('DATAOWNER_PRIVATEKEY')
+
+# Connection to SQLite3 data_owner database
+conn = sqlite3.connect('files/data_owner/data_owner.db')
+x = conn.cursor()
 
 
 def retrieve_data(authority_address):
@@ -47,45 +52,55 @@ def generate_pp_pk(process_instance_id):
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk1 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth1_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-        ppw.write(pk1)
+    pk1 = pk1.decode('utf-8').rstrip('"').lstrip('"')
+    pk1 = pk1.encode('utf-8')
+    x.execute("INSERT OR IGNORE INTO authorities_public_keys VALUES (?,?,?)", (process_instance_id, 'Auth-1', pk1))
+    conn.commit()
 
     data = retrieve_data(authority2_address)
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk2 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth2_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-        ppw.write(pk2)
+    pk2 = pk2.decode('utf-8').rstrip('"').lstrip('"')
+    pk2 = pk2.encode('utf-8')
+    x.execute("INSERT OR IGNORE INTO authorities_public_keys VALUES (?,?,?)", (process_instance_id, 'Auth-2', pk2))
+    conn.commit()
 
     data = retrieve_data(authority3_address)
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk3 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth3_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-        ppw.write(pk3)
+    pk3 = pk3.decode('utf-8').rstrip('"').lstrip('"')
+    pk3 = pk3.encode('utf-8')
+    x.execute("INSERT OR IGNORE INTO authorities_public_keys VALUES (?,?,?)", (process_instance_id, 'Auth-3', pk3))
+    conn.commit()
 
     data = retrieve_data(authority4_address)
     check_authorities.append(data[0])
     check_parameters.append(data[1])
     pk4 = api.cat(data[2])
-    with open('files/data_owner/public_key_auth4_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-        ppw.write(pk4)
+    pk4 = pk4.decode('utf-8').rstrip('"').lstrip('"')
+    pk4 = pk4.encode('utf-8')
+    x.execute("INSERT OR IGNORE INTO authorities_public_keys VALUES (?,?,?)", (process_instance_id, 'Auth-4', pk4))
+    conn.commit()
 
     # res = all(ele == check_parameters[0] for ele in check_parameters)  # another method to check if the list is equal
     if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
-        with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-            ppw.write(getfile)
+        getfile = getfile.decode('utf-8').rstrip('"').lstrip('"')
+        getfile = getfile.encode('utf-8')
+        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?)", (process_instance_id, getfile))
+        conn.commit()
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/data_owner/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
-        public_parameters = ppr.read()
+    x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    public_parameters = result[0][1]
     return public_parameters
 
 
 def main(groupObj, maabe, api, process_instance_id):
-    global slice_id
     public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
@@ -93,20 +108,28 @@ def main(groupObj, maabe, api, process_instance_id):
     public_parameters["H"] = H
     public_parameters["F"] = F
 
-    with open('files/data_owner/public_key_auth1_' + str(process_instance_id) + '.txt', 'rb') as pk1r:
-        pk1 = pk1r.read()
+    x.execute("SELECT * FROM authorities_public_keys WHERE process_instance=? AND authority_name=?",
+              (process_instance_id, 'Auth-1'))
+    result = x.fetchall()
+    pk1 = result[0][2]
     pk1 = bytesToObject(pk1, groupObj)
 
-    with open('files/data_owner/public_key_auth2_' + str(process_instance_id) + '.txt', 'rb') as pk2r:
-        pk2 = pk2r.read()
+    x.execute("SELECT * FROM authorities_public_keys WHERE process_instance=? AND authority_name=?",
+              (process_instance_id, 'Auth-2'))
+    result = x.fetchall()
+    pk2 = result[0][2]
     pk2 = bytesToObject(pk2, groupObj)
 
-    with open('files/data_owner/public_key_auth3_' + str(process_instance_id) + '.txt', 'rb') as pk3r:
-        pk3 = pk3r.read()
+    x.execute("SELECT * FROM authorities_public_keys WHERE process_instance=? AND authority_name=?",
+              (process_instance_id, 'Auth-3'))
+    result = x.fetchall()
+    pk3 = result[0][2]
     pk3 = bytesToObject(pk3, groupObj)
 
-    with open('files/data_owner/public_key_auth4_' + str(process_instance_id) + '.txt', 'rb') as pk4r:
-        pk4 = pk4r.read()
+    x.execute("SELECT * FROM authorities_public_keys WHERE process_instance=? AND authority_name=?",
+              (process_instance_id, 'Auth-4'))
+    result = x.fetchall()
+    pk4 = result[0][2]
     pk4 = bytesToObject(pk4, groupObj)
 
     # public keys authorities
@@ -114,19 +137,19 @@ def main(groupObj, maabe, api, process_instance_id):
 
     f = open('files/data.json')
     data = json.load(f)
-    # access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
-    #                  'SUPPLIER@OU)',
-    #                  '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
-    #                  'SUPPLIER@OU and ELECTRONICS@OT)',
-    #                  '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
-    #                  'SUPPLIER@OU and MECHANICS@TU)']
-    #
-    # entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
-
     access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
-                     'SUPPLIER@OU)']
+                     'SUPPLIER@OU)',
+                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     'SUPPLIER@OU and ELECTRONICS@OT)',
+                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     'SUPPLIER@OU and MECHANICS@TU)']
 
-    entries = [list(data.keys())]
+    entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
+
+    # access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+    #                  'SUPPLIER@OU)']
+    #
+    # entries = [list(data.keys())]
 
     if len(access_policy) != len(entries):
         print('ERROR: The number of policies and entries is different')
@@ -179,13 +202,12 @@ def main(groupObj, maabe, api, process_instance_id):
 
     # encoded = cryptocode.encrypt("Ciao Marzia!", str(key_encrypt1))
 
-    name_file = 'files/key&ciphertext.txt'
-    with open(name_file, 'w', encoding='utf-8') as f:
-        json.dump(json_total, f, ensure_ascii=False, indent=4)
+    hash_file = api.add_json(json_total)
+    print(hash_file)
 
-    new_file = api.add(name_file)
-    hash_file = new_file['Hash']
-    print(f'ipfs hash: {hash_file}')
+    x.execute("INSERT OR IGNORE INTO messages VALUES (?,?,?,?)",
+              (process_instance_id, str(message_id), hash_file, str(json_total)))
+    conn.commit()
 
     print(os.system('python3.11 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
         data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))

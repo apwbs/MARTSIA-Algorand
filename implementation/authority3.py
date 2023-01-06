@@ -10,6 +10,8 @@ import base64
 import subprocess
 from algosdk.encoding import decode_address, encode_address
 import ast
+import io
+import sqlite3
 
 app_id_box = config('APPLICATION_ID_BOX')
 
@@ -21,23 +23,32 @@ authority1_address = config('AUTHORITY1_ADDRESS')
 authority4_address = config('AUTHORITY4_ADDRESS')
 
 authorities_list = [authority1_address, authority2_address, authority3_address, authority4_address]
+authorities_names = ['UT', 'OU', 'OT', 'TU']
+
+# Connection to SQLite3 authority3 database
+conn = sqlite3.connect('files/authority3/authority3_database.db')
+x = conn.cursor()
 
 
 def save_authorities_names(api, process_instance_id):
-    name_file = 'files/authority3/authorities_names_au3_' + str(process_instance_id) + '.txt'
-    with open(name_file, 'w') as ua:
-        for i, addr in enumerate(authorities_list):
-            ua.write('identification: ' + 'authority ' + str(i+1) + '\n')
-            ua.write('name: ' + 'UT' + '\n')
-            ua.write('address: ' + addr + '\n\n')
+    f = io.StringIO()
+    for i, addr in enumerate(authorities_list):
+        f.write('identification: ' + 'authority ' + str(i + 1) + '\n')
+        f.write('name: ' + str(authorities_names[i]) + '\n')
+        f.write('address: ' + addr + '\n\n')
+    f.seek(0)
 
-    new_file = api.add(name_file)
-    hash_file = new_file['Hash']
-    print(f'ipfs hash: {hash_file}')
+    file_to_str = f.read()
+
+    hash_file = api.add_json(file_to_str)
+    print(hash_file)
 
     authorities_name = hash_file + '#'
     padding = '0' * 405
     authorities_name_padded = authorities_name + padding
+
+    x.execute("INSERT OR IGNORE INTO authority_names VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
+    conn.commit()
 
     method = 'put_box'
     print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
@@ -49,11 +60,8 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     g2_3 = groupObj.random(G2)
     (h1_3, h2_3) = mpc_setup.commit(groupObj, g1_3, g2_3)
 
-    with open('files/authority3/h1_3_' + str(process_instance_id) + '.txt', 'w') as h1_3w:
-        h1_3w.write(h1_3)
-
-    with open('files/authority3/h2_3_' + str(process_instance_id) + '.txt', 'w') as h2_3w:
-        h2_3w.write(h2_3)
+    x.execute("INSERT OR IGNORE INTO h_values VALUES (?,?,?)", (process_instance_id, h1_3, h2_3))
+    conn.commit()
 
     method = 'read_box'
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
@@ -70,19 +78,15 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     g1_3_bytes = groupObj.serialize(g1_3)
     g2_3_bytes = groupObj.serialize(g2_3)
 
-    with open('files/authority3/g1_3_' + str(process_instance_id) + '.txt', 'wb') as g1_3w:
-        g1_3w.write(g1_3_bytes)
-
-    with open('files/authority3/g2_3_' + str(process_instance_id) + '.txt', 'wb') as g2_3w:
-        g2_3w.write(g2_3_bytes)
+    x.execute("INSERT OR IGNORE INTO g_values VALUES (?,?,?)", (process_instance_id, g1_3_bytes, g2_3_bytes))
+    conn.commit()
 
 
 def initial_parameters(process_instance_id):
-    with open('files/authority3/g1_3_' + str(process_instance_id) + '.txt', 'rb') as g1r:
-        g1_3_bytes = g1r.read()
-
-    with open('files/authority3/g2_3_' + str(process_instance_id) + '.txt', 'rb') as g2r:
-        g2_3_bytes = g2r.read()
+    x.execute("SELECT * FROM g_values WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    g1_3_bytes = result[0][1]
+    g2_3_bytes = result[0][2]
 
     method = 'read_box'
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
@@ -98,19 +102,17 @@ def initial_parameters(process_instance_id):
 
 
 def generate_public_parameters(groupObj, maabe, api, process_instance_id):
-    with open('files/authority3/g1_3_' + str(process_instance_id) + '.txt', 'rb') as g1:
-        g1_3_bytes = g1.read()
+    x.execute("SELECT * FROM g_values WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    g1_3_bytes = result[0][1]
     g1_3 = groupObj.deserialize(g1_3_bytes)
-
-    with open('files/authority3/g2_3_' + str(process_instance_id) + '.txt', 'rb') as g2:
-        g2_3_bytes = g2.read()
+    g2_3_bytes = result[0][2]
     g2_3 = groupObj.deserialize(g2_3_bytes)
 
-    with open('files/authority3/h1_3_' + str(process_instance_id) + '.txt', 'r') as h1:
-        h1 = h1.read()
-
-    with open('files/authority3/h2_3_' + str(process_instance_id) + '.txt', 'r') as h2:
-        h2 = h2.read()
+    x.execute("SELECT * FROM h_values WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    h1 = result[0][1]
+    h2 = result[0][2]
 
     method = 'read_specific_box'
     ####################
@@ -194,13 +196,12 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     public_parameters_reduced = dict(list(public_parameters.items())[0:3])
     pp_reduced = objectToBytes(public_parameters_reduced, groupObj)
 
-    name_file = 'files/authority3/public_parameters_authority3_' + str(process_instance_id) + '.txt'
-    with open(name_file, 'wb') as ipfs:
-        ipfs.write(pp_reduced)
+    file_to_str = pp_reduced.decode('utf-8')
+    hash_file = api.add_json(file_to_str)
+    print(hash_file)
 
-    new_file = api.add(name_file)
-    hash_file = new_file['Hash']
-    print(f'ipfs hash: {hash_file}')
+    x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
+    conn.commit()
 
     method = 'read_box'
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,
@@ -216,8 +217,9 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/authority3/public_parameters_authority3_' + str(process_instance_id) + '.txt', 'rb') as ppa2:
-        public_parameters = ppa2.read()
+    x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    public_parameters = result[0][2].encode()
     return public_parameters
 
 
@@ -234,15 +236,15 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
     pk3_bytes = objectToBytes(pk3, groupObj)
     sk3_bytes = objectToBytes(sk3, groupObj)
 
-    name_file = 'files/authority3/authority_ot_pk_' + str(process_instance_id) + '.txt'
-    with open(name_file, 'wb') as a2:
-        a2.write(pk3_bytes)
-    with open('files/authority3/private_key_ot3_' + str(process_instance_id) + '.txt', 'wb') as as2:
-        as2.write(sk3_bytes)
+    file_to_str = pk3_bytes.decode('utf-8')
+    hash_file = api.add_json(file_to_str)
+    print(hash_file)
 
-    new_file = api.add(name_file)
-    hash_file = new_file['Hash']
-    print(f'ipfs hash: {hash_file}')
+    x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, sk3_bytes))
+    conn.commit()
+
+    x.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?,?)", (process_instance_id, hash_file, pk3_bytes))
+    conn.commit()
 
     method = 'read_box'
     result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority3_private_key, method,

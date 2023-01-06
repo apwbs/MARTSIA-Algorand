@@ -118,7 +118,6 @@ def main(groupObj, maabe, api, process_instance_id):
     #     pk1 = pk1r.read()
     # pk1 = bytesToObject(pk1, groupObj)
 
-
     x.execute("SELECT * FROM authorities_public_keys WHERE process_instance=? AND authority_name=?",
               (process_instance_id, 'Auth-1'))
     result = x.fetchall()
@@ -216,7 +215,8 @@ def main(groupObj, maabe, api, process_instance_id):
     hash_file = api.add_json(json_total)
     print(hash_file)
 
-    x.execute("INSERT OR IGNORE INTO messages VALUES (?,?,?)", (process_instance_id, str(message_id), str(json_total)))
+    x.execute("INSERT OR IGNORE INTO messages VALUES (?,?,?,?)",
+              (process_instance_id, str(message_id), hash_file, str(json_total)))
     conn.commit()
 
     # name_file = 'files/key&ciphertext.txt'

@@ -27,7 +27,7 @@ authority4_address = config('AUTHORITY4_ADDRESS')
 authorities_list = [authority1_address, authority2_address, authority3_address, authority4_address]
 authorities_names = ['UT', 'OU', 'OT', 'TU']
 
-# Connection to SQLite3 database1
+# Connection to SQLite3 authority1 database
 conn = sqlite3.connect('files/authority1/authority1_database.db')
 x = conn.cursor()
 
@@ -254,6 +254,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
 
     file_to_str = pp_reduced.decode('utf-8')
     hash_file = api.add_json(file_to_str)
+    print(hash_file)
 
     x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?)", (process_instance_id, file_to_str))
     conn.commit()

@@ -11,6 +11,7 @@ import subprocess
 from algosdk.encoding import decode_address, encode_address
 import ast
 import retriever
+import sqlite3
 
 app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
@@ -19,6 +20,10 @@ authority1_address = config('AUTHORITY1_ADDRESS')
 authority2_address = config('AUTHORITY2_ADDRESS')
 authority3_address = config('AUTHORITY3_ADDRESS')
 authority4_address = config('AUTHORITY4_ADDRESS')
+
+# Connection to SQLite3 data_owner database
+conn = sqlite3.connect('files/reader/reader.db')
+x = conn.cursor()
 
 
 def merge_dicts(*dict_args):
@@ -67,13 +72,20 @@ def generate_public_parameters():
 
     if len(set(check_authorities)) == 1 and len(set(check_parameters)) == 1:
         getfile = api.cat(check_parameters[0])
-        with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
-            ppw.write(getfile)
+        getfile = getfile.decode('utf-8').rstrip('"').lstrip('"')
+        getfile = getfile.encode('utf-8')
+        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?)", (process_instance_id, getfile))
+        conn.commit()
+        # with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
+        #     ppw.write(getfile)
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
-        public_parameters = ppr.read()
+    x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    public_parameters = result[0][1]
+    # with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
+    #     public_parameters = ppr.read()
     return public_parameters
 
 
@@ -100,20 +112,36 @@ def main(process_instance_id, message_id, slice_id):
     public_parameters["F"] = F
 
     # keygen Bob
-    with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'r') as us1:
-        user_sk1 = us1.read()
+    # with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'r') as us1:
+    #     user_sk1 = us1.read()
+    # user_sk1 = bytesToObject(user_sk1, groupObj)
+
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+              (str(process_instance_id), 'Auth1'))
+    result = x.fetchall()
+    user_sk1 = result[0][2]
+    user_sk1 = user_sk1.encode()
     user_sk1 = bytesToObject(user_sk1, groupObj)
 
-    with open('files/reader/user_sk2_' + str(process_instance_id) + '.txt', 'r') as us2:
-        user_sk2 = us2.read()
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+              (str(process_instance_id), 'Auth2'))
+    result = x.fetchall()
+    user_sk2 = result[0][2]
+    user_sk2 = user_sk2.encode()
     user_sk2 = bytesToObject(user_sk2, groupObj)
 
-    with open('files/reader/user_sk3_' + str(process_instance_id) + '.txt', 'r') as us3:
-        user_sk3 = us3.read()
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+              (str(process_instance_id), 'Auth3'))
+    result = x.fetchall()
+    user_sk3 = result[0][2]
+    user_sk3 = user_sk3.encode()
     user_sk3 = bytesToObject(user_sk3, groupObj)
 
-    with open('files/reader/user_sk4_' + str(process_instance_id) + '.txt', 'r') as us4:
-        user_sk4 = us4.read()
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+              (str(process_instance_id), 'Auth4'))
+    result = x.fetchall()
+    user_sk4 = result[0][2]
+    user_sk4 = user_sk4.encode()
     user_sk4 = bytesToObject(user_sk4, groupObj)
 
     user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
@@ -141,8 +169,8 @@ if __name__ == '__main__':
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-    process_instance_id = app_id_box
+    process_instance_id = int(app_id_box)
     # generate_public_parameters()
-    message_id = 11208882698518375925
-    slice_id = 18063518279518948035
+    message_id = 715437799485167263
+    slice_id = 14174114688294290709
     main(process_instance_id, message_id, slice_id)

@@ -12,7 +12,7 @@ x = connection.cursor()
 app_id_box = config('APPLICATION_ID_BOX')
 
 HEADER = 64
-PORT = 5060
+PORT = 5065
 FORMAT = 'utf-8'
 server_sni_hostname = 'example.com'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -103,23 +103,23 @@ reader_address = manufacturer
 process_instance_id = int(app_id_box)
 gid = "bob"
 
-authority = 'Auth3'
+authority = 'Auth-4'
 
-# send("Auth1 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth2 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth3 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth4 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth-1 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth-2 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth-3 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth-4 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
 
 signature_sending = sign_number(authority)
 
-# send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+# send("Auth-1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
-# send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+# send("Auth-2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
-send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+# send("Auth-3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+#      str(signature_sending))
+send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
      str(signature_sending))
-# send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-#      str(signature_sending))
 # exit()
 # input()
 

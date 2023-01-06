@@ -105,10 +105,10 @@ def handle_client(conn, addr):
             # print(f"[{addr}] {msg}")
             # conn.send("Msg received!".encode(FORMAT))
             message = msg.split('||')
-            if message[0] == "Auth1 - Start handshake":
+            if message[0] == "Auth-1 - Start handshake":
                 number_to_sign = generate_number_to_sign(message[1], message[2])
                 conn.send(b'number to sign: ' + str(number_to_sign).encode())
-            if message[0] == "Auth1 - Generate your part of my key":
+            if message[0] == "Auth-1 - Generate your part of my key":
                 if check_handshake(message[2], message[3], message[4]):
                     user_sk1 = generate_key_auth1(message[1], message[2], message[3])
                     conn.send(user_sk1)

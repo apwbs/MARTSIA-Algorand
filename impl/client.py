@@ -4,6 +4,8 @@ from decouple import config
 from Crypto.PublicKey import RSA
 from hashlib import sha512
 
+app_id_box = config('APPLICATION_ID_BOX')
+
 HEADER = 64
 PORT = 5050
 FORMAT = 'utf-8'
@@ -75,20 +77,20 @@ manufacturer = config('READER_ADDRESS_MANUFACTURER')
 electronics = config('READER_ADDRESS_SUPPLIER1')
 mechanics = config('READER_ADDRESS_SUPPLIER2')
 reader_address = manufacturer
-process_instance_id = 1387640806
+process_instance_id = int(app_id_box)
 gid = "bob"
 
 authority = 'Auth1'
 
-# send("Auth1 - Start handshake||" + reader_address)
+send("Auth1 - Start handshake||" + reader_address)
 # send("Auth2 - Start handshake||" + reader_address)
 # send("Auth3 - Start handshake||" + reader_address)
 # send("Auth4 - Start handshake||" + reader_address)
 
-signature_sending = sign_number(authority)
+# signature_sending = sign_number(authority)
 
-send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-     str(signature_sending))
+# send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+#      str(signature_sending))
 # send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
 # send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +

@@ -219,7 +219,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
 def retrieve_public_parameters(process_instance_id):
     x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
     result = x.fetchall()
-    public_parameters = result[0][1].encode()
+    public_parameters = result[0][2].encode()
     return public_parameters
 
 
@@ -238,6 +238,7 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
 
     file_to_str = pk3_bytes.decode('utf-8')
     hash_file = api.add_json(file_to_str)
+    print(hash_file)
 
     x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, sk3_bytes))
     conn.commit()

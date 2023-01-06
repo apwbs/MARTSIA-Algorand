@@ -10,9 +10,7 @@ import ipfshttpclient
 from decouple import config
 import sqlite3
 
-authority1_address = config('AUTHORITY1_ADDRESS')
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
-
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
 HEADER = 64

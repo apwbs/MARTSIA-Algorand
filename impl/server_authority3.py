@@ -13,8 +13,6 @@ import sqlite3
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
-authority3_address = config('AUTHORITY3_ADDRESS')
-
 HEADER = 64
 PORT = 5060
 server_cert = 'client-server/Keys/server.crt'

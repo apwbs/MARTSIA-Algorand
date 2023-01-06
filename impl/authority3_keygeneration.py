@@ -6,17 +6,27 @@ import ipfshttpclient
 import json
 import sys
 import retriever
+import sqlite3
 
 app_id_attribute = config('APPLICATION_ID_CERTIFIER')
 
 
 def retrieve_public_parameters(process_instance_id):
-    with open('files/authority3/public_parameters_authority3_' + str(process_instance_id) + '.txt', 'rb') as ppa3:
-        public_parameters = ppa3.read()
+    # Connection to SQLite3 authority3 database
+    conn = sqlite3.connect('files/authority3/authority3_database.db')
+    x = conn.cursor()
+
+    x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    public_parameters = result[0][2].encode()
     return public_parameters
 
 
 def generate_user_key(gid, process_instance_id, reader_address):
+    # Connection to SQLite3 authority3 database
+    conn = sqlite3.connect('files/authority3/authority3_database.db')
+    x = conn.cursor()
+
     groupObj = PairingGroup('SS512')
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
@@ -28,8 +38,9 @@ def generate_user_key(gid, process_instance_id, reader_address):
     public_parameters["H"] = H
     public_parameters["F"] = F
 
-    with open('files/authority3/private_key_ot3_' + str(process_instance_id) + '.txt', 'rb') as sk3r:
-        sk3 = sk3r.read()
+    x.execute("SELECT * FROM private_keys WHERE process_instance=?", (process_instance_id,))
+    result = x.fetchall()
+    sk3 = result[0][1]
     sk3 = bytesToObject(sk3, groupObj)
 
     # keygen Bob

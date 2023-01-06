@@ -3,11 +3,16 @@ import ssl
 from decouple import config
 from Crypto.PublicKey import RSA
 from hashlib import sha512
+import sqlite3
+
+# Connection to SQLite3 reader database
+connection = sqlite3.connect('files/reader/reader.db')
+x = connection.cursor()
 
 app_id_box = config('APPLICATION_ID_BOX')
 
 HEADER = 64
-PORT = 5050
+PORT = 5060
 FORMAT = 'utf-8'
 server_sni_hostname = 'example.com'
 DISCONNECT_MESSAGE = "!DISCONNECT"
@@ -29,22 +34,32 @@ conn.connect(ADDR)
 
 
 def sign_number(authority_invoked):
-    with open('files/reader/number to sign_' + authority_invoked + '.txt', 'r') as r:
-        number_to_sign = r.read()
-    number_to_sign = int(number_to_sign)
+    x.execute("SELECT * FROM handshake_number WHERE process_instance=? AND authority_name=?",
+              (process_instance_id, authority_invoked))
+    result = x.fetchall()
+    number_to_sign = result[0][2]
 
-    with open('files/keys_readers/handshake_private_key_' + str(reader_address) + '.txt', 'r') as pk:
-        private_key = pk.read()
-        private_key = private_key.split('###')
+    # with open('files/reader/number to sign_' + authority_invoked + '.txt', 'r') as r:
+    #     number_to_sign = r.read()
+    # number_to_sign = int(number_to_sign)
 
-    private_key_n = int(private_key[1])
-    private_key_d = int(private_key[2])
+    x.execute("SELECT * FROM rsa_private_key")
+    result = x.fetchall()
+    private_key = result[0]
+
+    # with open('files/keys_readers/handshake_private_key_' + str(reader_address) + '.txt', 'r') as pk:
+    #     private_key = pk.read()
+    #     private_key = private_key.split('###')
+
+    private_key_n = int(private_key[0])
+    private_key_d = int(private_key[1])
 
     msg = bytes(str(number_to_sign), 'utf-8')
     hash = int.from_bytes(sha512(msg).digest(), byteorder='big')
     signature = pow(hash, private_key_d, private_key_n)
     # print("Signature:", hex(signature))
     return signature
+
 
 """
 function to handle the sending and receiving messages.
@@ -60,9 +75,17 @@ def send(msg):
     conn.send(message)
     receive = conn.recv(6000).decode(FORMAT)
     if len(receive) != 0:
-        if receive[:15] == 'number to sign:':
-            with open('files/reader/number to sign_' + authority + '.txt', "w") as text_file:
-                text_file.write(receive[16:])
+        # if receive[:15] == 'number to sign:':
+        #     x.execute("INSERT OR IGNORE INTO handshake_number VALUES (?,?,?)",
+        #               (process_instance_id, authority, receive[16:]))
+        #     connection.commit()
+        # with open('files/reader/number to sign_' + authority + '.txt', "w") as text_file:
+        #     text_file.write(receive[16:])
+
+        x.execute("INSERT OR IGNORE INTO authorities_generated_decription_keys VALUES (?,?,?)",
+                  (process_instance_id, authority, receive))
+        connection.commit()
+
         # with open('files/reader/user_sk1_' + str(process_instance_id) + '.txt', 'w') as text_file:
         #     text_file.write(receive)
         # with open('files/reader/user_sk2_' + str(process_instance_id) + '.txt', 'w') as text_file:
@@ -80,21 +103,21 @@ reader_address = manufacturer
 process_instance_id = int(app_id_box)
 gid = "bob"
 
-authority = 'Auth1'
+authority = 'Auth3'
 
-send("Auth1 - Start handshake||" + reader_address)
-# send("Auth2 - Start handshake||" + reader_address)
-# send("Auth3 - Start handshake||" + reader_address)
-# send("Auth4 - Start handshake||" + reader_address)
+# send("Auth1 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth2 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth3 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send("Auth4 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
 
-# signature_sending = sign_number(authority)
+signature_sending = sign_number(authority)
 
 # send("Auth1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
 # send("Auth2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
-# send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-#      str(signature_sending))
+send("Auth3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
+     str(signature_sending))
 # send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
 #      str(signature_sending))
 # exit()

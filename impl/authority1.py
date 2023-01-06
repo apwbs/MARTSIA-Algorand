@@ -303,12 +303,12 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
     pk1_bytes = objectToBytes(pk1, groupObj)
     sk1_bytes = objectToBytes(sk1, groupObj)
 
-    file_to_str = sk1_bytes.decode('utf-8')
+    file_to_str = pk1_bytes.decode('utf-8')
 
-    x.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?)", (process_instance_id, pk1_bytes))
+    x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, sk1_bytes))
     conn.commit()
 
-    x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, file_to_str))
+    x.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?)", (process_instance_id, pk1_bytes))
     conn.commit()
 
     # name_file = 'files/authority1/authority_ut_pk_' + str(process_instance_id) + '.txt'

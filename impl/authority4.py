@@ -238,12 +238,12 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
     pk4_bytes = objectToBytes(pk4, groupObj)
     sk4_bytes = objectToBytes(sk4, groupObj)
 
-    file_to_str = sk4_bytes.decode('utf-8')
+    file_to_str = pk4_bytes.decode('utf-8')
 
-    x.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?)", (process_instance_id, pk4_bytes))
+    x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, sk4_bytes))
     conn.commit()
 
-    x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, file_to_str))
+    x.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?)", (process_instance_id, pk4_bytes))
     conn.commit()
 
     hash_file = api.add_json(file_to_str)

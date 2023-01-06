@@ -142,6 +142,7 @@ def call_box_method(app_id: int, authority_private_key, method: abi.Method, args
         ],  # For the Python SDK, provide a list of (app_id, box_key) tuples you want to access.
     )
     resp = atc.execute(client, 5)
+
     info = client.pending_transaction_info(resp.tx_ids[0])
     # print(f"Box Txn Info: {info}")
 

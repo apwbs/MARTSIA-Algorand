@@ -31,6 +31,7 @@ def generate_attributes():
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
     dict_users_dumped = json.dumps(dict_users)
     name_file = 'files/users_attributes_' + str(process_instance_id) + '.txt'
+    # there is no need to save the file locally
     with open(name_file, 'w') as ua:
         ua.write('"process_instance_id": ' + str(process_instance_id) + '\n')
         ua.write(dict_users_dumped)

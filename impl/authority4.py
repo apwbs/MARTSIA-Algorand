@@ -33,14 +33,14 @@ x = conn.cursor()
 
 
 def save_authorities_names(api, process_instance_id):
-    f = io.BytesIO()
+    f = io.StringIO()
     for i, addr in enumerate(authorities_list):
-        f.write(b'identification: ' + b'authority ' + str(i + 1).encode() + b'\n')
-        f.write(b'name: ' + str(authorities_names[i]).encode() + b'\n')
-        f.write(b'address: ' + addr.encode() + b'\n\n')
+        f.write('identification: ' + 'authority ' + str(i + 1) + '\n')
+        f.write('name: ' + str(authorities_names[i]) + '\n')
+        f.write('address: ' + addr + '\n\n')
     f.seek(0)
 
-    file_to_str = f.read().decode('utf-8')
+    file_to_str = f.read()
 
     hash_file = api.add_json(file_to_str)
     print(hash_file)

@@ -3,6 +3,7 @@ from decouple import config
 import ipfshttpclient
 import os
 import io
+import sqlite3
 
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
@@ -13,6 +14,10 @@ certifier_private_key = config('CERTIFIER_PRIVATEKEY')
 manufacturer_address = config('READER_ADDRESS_MANUFACTURER')
 supplier1_address = config('READER_ADDRESS_SUPPLIER1')
 supplier2_address = config('READER_ADDRESS_SUPPLIER2')
+
+# Connection to SQLite3 attribute_certifier database
+conn = sqlite3.connect('files/attribute_certifier/attribute_certifier.db')
+x = conn.cursor()
 
 
 def generate_attributes():
@@ -40,6 +45,9 @@ def generate_attributes():
     hash_file = api.add_json(file_to_str)
     print(hash_file)
 
+    x.execute("INSERT OR IGNORE INTO user_attributes VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
+    conn.commit()
+
     # dict_users_dumped = json.dumps(dict_users)
     # name_file = 'files/users_attributes_' + str(process_instance_id) + '.txt'
     # # there is no need to save the file locally
@@ -52,6 +60,13 @@ def generate_attributes():
 
     print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
                     (certifier_private_key, app_id_certifier, process_instance_id, hash_file)))
+
+    # g = io.StringIO()
+    # g.write('ciao')
+    # g.seek(0)
+    # hash_file = api.add_json(g.read())
+    # print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+    #                 (certifier_private_key, app_id_certifier, 123, hash_file)))
 
 
 if __name__ == "__main__":

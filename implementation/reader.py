@@ -113,25 +113,25 @@ def main(process_instance_id, message_id, slice_id):
     #     user_sk1 = us1.read()
     # user_sk1 = bytesToObject(user_sk1, groupObj)
 
-    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_address=?",
               (process_instance_id, authority1_address))
     result = x.fetchall()
     user_sk1 = result[0][3]
     user_sk1 = bytesToObject(user_sk1, groupObj)
 
-    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_address=?",
               (process_instance_id, authority2_address))
     result = x.fetchall()
     user_sk2 = result[0][3]
     user_sk2 = bytesToObject(user_sk2, groupObj)
 
-    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_address=?",
               (process_instance_id, authority3_address))
     result = x.fetchall()
     user_sk3 = result[0][3]
     user_sk3 = bytesToObject(user_sk3, groupObj)
 
-    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
+    x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_address=?",
               (process_instance_id, authority4_address))
     result = x.fetchall()
     user_sk4 = result[0][3]
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
     process_instance_id = app_id_box
-    generate_public_parameters()
-    # message_id = 17368284034478933045
-    # slice_id = 10528838083527939354
-    # main(process_instance_id, message_id, slice_id)
+    # generate_public_parameters()
+    message_id = 17992127434020893006
+    slice_id = 8400255967110086898
+    main(process_instance_id, message_id, slice_id)

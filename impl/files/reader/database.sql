@@ -14,16 +14,18 @@ CREATE TABLE public_parameters (
 );
 
 CREATE TABLE rsa_public_key (
+    reader_address TEXT,
     ipfs_file_link_hash TEXT,
     publicKey_n TEXT,
     publicKey_e TEXT,
-    primary key (ipfs_file_link_hash, publicKey_n, publicKey_e)
+    primary key (reader_address)
 );
 
 CREATE TABLE rsa_private_key (
+    reader_address TEXT,
     privateKey_n TEXT,
     privateKey_d TEXT,
-    primary key (privateKey_n, privateKey_d)
+    primary key (reader_address)
 );
 
 CREATE TABLE handshake_number ( 
@@ -36,7 +38,6 @@ CREATE TABLE handshake_number (
 CREATE TABLE authorities_generated_decription_keys ( 
     process_instance TEXT,
     authority_name TEXT,
-    ipfs_file_link_hash TEXT,
     decription_key TEXT,
     primary key (process_instance, authority_name)
 );

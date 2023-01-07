@@ -16,8 +16,8 @@ electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
 mechanics_address = config('READER_ADDRESS_SUPPLIER2')
 mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
 
-reader_address = manufacturer_address
-private_key = manufacturer_private_key
+reader_address = electronics_address
+private_key = electronics_private_key
 
 # Connection to SQLite3 reader database
 conn = sqlite3.connect('files/reader/reader.db')
@@ -37,10 +37,13 @@ def generate_keys():
     hash_file = api.add_json(f.read())
     print(hash_file)
 
-    x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?)", (str(keyPair.n), str(keyPair.d)))
+    # reader address not necessary because each user has one key. Since we use only one 'reader/client' for all the
+    # readers, we need a distinction.
+    x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?,?)", (reader_address, str(keyPair.n), str(keyPair.d)))
     conn.commit()
 
-    x.execute("INSERT OR IGNORE INTO rsa_public_key VALUES (?,?,?)", (hash_file, str(keyPair.n), str(keyPair.e)))
+    x.execute("INSERT OR IGNORE INTO rsa_public_key VALUES (?,?,?,?)",
+              (reader_address, hash_file, str(keyPair.n), str(keyPair.e)))
     conn.commit()
 
     # name_file1 = 'files/keys_readers/handshake_private_key_' + str(reader_address) + '.txt'

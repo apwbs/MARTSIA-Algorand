@@ -74,7 +74,8 @@ def generate_public_parameters():
         getfile = api.cat(check_parameters[0])
         getfile = getfile.decode('utf-8').rstrip('"').lstrip('"')
         getfile = getfile.encode('utf-8')
-        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?)", (process_instance_id, getfile))
+        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)",
+                  (process_instance_id, check_parameters[0], getfile))
         conn.commit()
         # with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'wb') as ppw:
         #     ppw.write(getfile)
@@ -83,7 +84,7 @@ def generate_public_parameters():
 def retrieve_public_parameters(process_instance_id):
     x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
     result = x.fetchall()
-    public_parameters = result[0][1]
+    public_parameters = result[0][2]
     # with open('files/reader/public_parameters_reader_' + str(process_instance_id) + '.txt', 'rb') as ppr:
     #     public_parameters = ppr.read()
     return public_parameters
@@ -117,28 +118,28 @@ def main(process_instance_id, message_id, slice_id):
     # user_sk1 = bytesToObject(user_sk1, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
-              (str(process_instance_id), 'Auth1'))
+              (str(process_instance_id), 'Auth-1'))
     result = x.fetchall()
     user_sk1 = result[0][2]
     user_sk1 = user_sk1.encode()
     user_sk1 = bytesToObject(user_sk1, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
-              (str(process_instance_id), 'Auth2'))
+              (str(process_instance_id), 'Auth-2'))
     result = x.fetchall()
     user_sk2 = result[0][2]
     user_sk2 = user_sk2.encode()
     user_sk2 = bytesToObject(user_sk2, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
-              (str(process_instance_id), 'Auth3'))
+              (str(process_instance_id), 'Auth-3'))
     result = x.fetchall()
     user_sk3 = result[0][2]
     user_sk3 = user_sk3.encode()
     user_sk3 = bytesToObject(user_sk3, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
-              (str(process_instance_id), 'Auth4'))
+              (str(process_instance_id), 'Auth-4'))
     result = x.fetchall()
     user_sk4 = result[0][2]
     user_sk4 = user_sk4.encode()
@@ -171,6 +172,6 @@ if __name__ == '__main__':
 
     process_instance_id = int(app_id_box)
     # generate_public_parameters()
-    message_id = 715437799485167263
-    slice_id = 14174114688294290709
+    message_id = 6298308065228631623
+    slice_id = 14409851932818316068
     main(process_instance_id, message_id, slice_id)

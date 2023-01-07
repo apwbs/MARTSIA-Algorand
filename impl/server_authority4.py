@@ -71,11 +71,11 @@ def check_handshake(process_instance_id, reader_address, signature):
     public_key_ipfs_link = retriever.retrieveReaderPublicKey(app_id_pk_readers, reader_address)
     getfile = api.cat(public_key_ipfs_link)
     getfile = getfile.split(b'###')
-    private_key_n = int(getfile[1].decode('utf-8'))
-    private_key_e = int(getfile[2].decode('utf-8').rstrip('"'))
+    public_key_n = int(getfile[1].decode('utf-8'))
+    public_key_e = int(getfile[2].decode('utf-8').rstrip('"'))
     if getfile[0].split(b': ')[1].decode('utf-8') == reader_address:
         hash = int.from_bytes(sha512(msg).digest(), byteorder='big')
-        hashFromSignature = pow(int(signature), private_key_e, private_key_n)
+        hashFromSignature = pow(int(signature), public_key_e, public_key_n)
         print("Signature valid:", hash == hashFromSignature)
         return hash == hashFromSignature
 

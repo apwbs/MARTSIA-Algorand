@@ -43,7 +43,7 @@ def sign_number(authority_invoked):
     #     number_to_sign = r.read()
     # number_to_sign = int(number_to_sign)
 
-    x.execute("SELECT * FROM rsa_private_key")
+    x.execute("SELECT * FROM rsa_private_key WHERE reader_address=?", (reader_address,))
     result = x.fetchall()
     private_key = result[0]
 
@@ -51,8 +51,8 @@ def sign_number(authority_invoked):
     #     private_key = pk.read()
     #     private_key = private_key.split('###')
 
-    private_key_n = int(private_key[0])
-    private_key_d = int(private_key[1])
+    private_key_n = int(private_key[1])
+    private_key_d = int(private_key[2])
 
     msg = bytes(str(number_to_sign), 'utf-8')
     hash = int.from_bytes(sha512(msg).digest(), byteorder='big')
@@ -99,27 +99,19 @@ def send(msg):
 manufacturer = config('READER_ADDRESS_MANUFACTURER')
 electronics = config('READER_ADDRESS_SUPPLIER1')
 mechanics = config('READER_ADDRESS_SUPPLIER2')
-reader_address = manufacturer
+reader_address = electronics
 process_instance_id = int(app_id_box)
 gid = "bob"
 
 authority = 'Auth-4'
 
-# send("Auth-1 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth-2 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth-3 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
-# send("Auth-4 - Start handshake||" + str(process_instance_id) + '||' + reader_address)
+# send(authority + " - Start handshake||" + str(process_instance_id) + '||' + reader_address)
 
 signature_sending = sign_number(authority)
 
-# send("Auth-1 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-#      str(signature_sending))
-# send("Auth-2 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-#      str(signature_sending))
-# send("Auth-3 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-#      str(signature_sending))
-send("Auth4 - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address + '||' +
-     str(signature_sending))
+send(authority + " - Generate your part of my key||" + gid + '||' + str(process_instance_id) + '||' + reader_address
+     + '||' + str(signature_sending))
+
 # exit()
 # input()
 

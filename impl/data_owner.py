@@ -218,7 +218,7 @@ def main(groupObj, maabe, api, process_instance_id):
     # encoded = cryptocode.encrypt("Ciao Marzia!", str(key_encrypt1))
 
     hash_file = api.add_json(json_total)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO messages VALUES (?,?,?,?)",
               (process_instance_id, str(message_id), hash_file, str(json_total)))

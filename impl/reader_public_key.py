@@ -35,7 +35,7 @@ def generate_keys():
     f.seek(0)
 
     hash_file = api.add_json(f.read())
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     # reader address not necessary because each user has one key. Since we use only one 'reader/client' for all the
     # readers, we need a distinction.

@@ -46,7 +46,10 @@ def generate_user_key(gid, process_instance_id, reader_address):
     # keygen Bob
     attributes_ipfs_link = retriever.retrieveReaderAttributes(app_id_attribute, process_instance_id)
     getfile = api.cat(attributes_ipfs_link)
-    getfile = getfile.split(b'\n')
+    getfile = getfile.replace(b'\\', b'')
+    getfile = getfile.decode('utf-8').rstrip('"').lstrip('"')
+    getfile = getfile.encode('utf-8')
+    getfile = getfile.split(b'####')
     attributes_dict = json.loads(getfile[1].decode('utf-8'))
     user_attr4 = attributes_dict[reader_address]
     user_attr4 = [k for k in user_attr4 if k.endswith('@TU')]

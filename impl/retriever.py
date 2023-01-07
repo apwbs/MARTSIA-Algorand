@@ -16,6 +16,7 @@ limit = 1
 
 def retrieveReaderAttributes(application_id, process_instance_id):
     response = indexer_client.search_transactions(application_id=application_id)
+    response['transactions'].reverse()
     for i in range(len(response['transactions'])):
         if i != 3:
             part = response['transactions'][i]['global-state-delta']

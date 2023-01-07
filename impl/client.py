@@ -12,11 +12,11 @@ x = connection.cursor()
 app_id_box = config('APPLICATION_ID_BOX')
 
 HEADER = 64
-PORT = 5065
+PORT = 5050
 FORMAT = 'utf-8'
 server_sni_hostname = 'example.com'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "172.17.0.2"
+SERVER = "172.17.0.3"
 ADDR = (SERVER, PORT)
 server_cert = 'client-server/Keys/server.crt'
 client_cert = 'client-server/Keys/client.crt'
@@ -81,7 +81,7 @@ def send(msg):
         #     connection.commit()
         # with open('files/reader/number to sign_' + authority + '.txt', "w") as text_file:
         #     text_file.write(receive[16:])
-
+        print(receive)
         x.execute("INSERT OR IGNORE INTO authorities_generated_decription_keys VALUES (?,?,?)",
                   (process_instance_id, authority, receive))
         connection.commit()
@@ -103,7 +103,7 @@ reader_address = electronics
 process_instance_id = int(app_id_box)
 gid = "bob"
 
-authority = 'Auth-4'
+authority = 'Auth-1'
 
 # send(authority + " - Start handshake||" + str(process_instance_id) + '||' + reader_address)
 

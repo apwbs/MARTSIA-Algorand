@@ -43,7 +43,7 @@ def save_authorities_names(api, process_instance_id):
     file_to_str = f.read()
 
     hash_file = api.add_json(file_to_str)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
     # a = api.get_json('QmXzPjFFgK5RB6iX4jRe3jWNRX8kz2imjJpUQdQyvcymqj')
     # print(a)
 
@@ -254,7 +254,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
 
     file_to_str = pp_reduced.decode('utf-8')
     hash_file = api.add_json(file_to_str)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
     conn.commit()
@@ -305,7 +305,7 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
 
     file_to_str = pk1_bytes.decode('utf-8')
     hash_file = api.add_json(file_to_str)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO private_keys VALUES (?,?)", (process_instance_id, sk1_bytes))
     conn.commit()

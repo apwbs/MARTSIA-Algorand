@@ -74,8 +74,8 @@ def generate_key(x):
     cipher_generated_key(reader_address, process_instance_id, key)
 
 
-# Connection to SQLite3 data_owner database
-conn = sqlite3.connect('files/reader/reader.db')
+# Connection to SQLite3 authority1_database database
+conn = sqlite3.connect('files/authority1/authority1.db')
 x = conn.cursor()
 
 

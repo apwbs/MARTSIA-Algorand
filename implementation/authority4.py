@@ -26,7 +26,7 @@ authorities_list = [authority1_address, authority2_address, authority3_address, 
 authorities_names = ['UT', 'OU', 'OT', 'TU']
 
 # Connection to SQLite3 authority4 database
-conn = sqlite3.connect('files/authority4/authority4_database.db')
+conn = sqlite3.connect('files/authority4/authority4.db')
 x = conn.cursor()
 
 

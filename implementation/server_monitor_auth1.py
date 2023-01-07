@@ -10,6 +10,8 @@ from algosdk.v2client import algod
 from algosdk import mnemonic, account
 from algosdk.future.transaction import PaymentTxn
 import ipfshttpclient
+import io
+import sqlite3
 
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
@@ -71,32 +73,73 @@ def generate_key(x):
     cipher_generated_key(reader_address, process_instance_id, key)
 
 
+# Connection to SQLite3 data_owner database
+conn = sqlite3.connect('files/reader/reader.db')
+x = conn.cursor()
+
+
 def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
     public_key_ipfs_link = retriever.retrieveReaderPublicKey(app_id_pk_readers, reader_address)
     getfile = api.cat(public_key_ipfs_link)
     getfile = getfile.split(b'###')
     if getfile[0].split(b': ')[1].decode('utf-8') == reader_address:
-        publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1])
+        publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1].rstrip(b'"').replace(b'\\n', b'\n'))
+        # print(publicKey_usable)
+        # exit()
 
         info = [generated_ma_key[i:i + 117] for i in range(0, len(generated_ma_key), 117)]
 
-        name_file = 'files/keys_readers/generated_key_ciphered_' + str(reader_address) + '_' \
-                    + str(process_instance_id) + '.txt'
-
+        f = io.BytesIO()
         for part in info:
             crypto = rsa.encrypt(part, publicKey_usable)
-            with open(name_file, 'ab') as ipfs:
-                ipfs.write(crypto)
+            f.write(crypto)
+        f.seek(0)
 
-        new_file = api.add(name_file)
-        hash_file = new_file['Hash']
-        print(f'ipfs hash: {hash_file}')
+        # info = b'ciao'
+        # f = io.BytesIO()
+        # crypto = rsa.encrypt(info, publicKey_usable)
+        # f.write(crypto)
+        # f.seek(0)
+
+        file_to_str = f.read()
+        print(file_to_str)
+        print()
+        j = base64.b64encode(file_to_str).decode('ascii')
+        s = json.dumps(j)
+        print(s)
+        # j2 = json.loads(s)
+        # data2 = base64.b64decode(j2['data'])
+        # print(type(data2))
+        # exit()
+        hash_file = api.add_json(s)
+        print(hash_file)
+
+        # x.execute("SELECT * FROM rsa_private_key WHERE reader_address=?", (reader_address,))
+        # result = x.fetchall()
+        # pk = result[0][1]
+        # privateKey_usable = rsa.PrivateKey.load_pkcs1(pk)
+        #
+        # message = rsa.decrypt(crypto, privateKey_usable)
+        # print(message)
+        # exit()
+
+        # name_file = 'files/keys_readers/generated_key_ciphered_' + str(reader_address) + '_' \
+        #             + str(process_instance_id) + '.txt'
+        # for part in info:
+        #     crypto = rsa.encrypt(part, publicKey_usable)
+        #     with open(name_file, 'ab') as ipfs:
+        #         ipfs.write(crypto)
+        #         print(len(crypto))
+        # new_file = api.add(name_file)
+        # hash_file = new_file['Hash']
+        # print(f'ipfs hash: {hash_file}')
+        # exit()
 
         send_ipfs_link(reader_address, process_instance_id, hash_file)
 
 
 def transactions_monitoring():
-    min_round = 26453840
+    min_round = 26811650
     transactions = []
     note = 'generate your part of my key'
     while True:

@@ -73,7 +73,7 @@ def send_key_request():
     # params.fee = 1000
     note = 'generate your part of my key,bob,' + str(app_id_box)
     note_encoded = note.encode()
-    receiver = authority4_address
+    receiver = authority1_address
 
     unsigned_txn = PaymentTxn(my_address, params, receiver, 0, None, note_encoded)
 

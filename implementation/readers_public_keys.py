@@ -15,8 +15,8 @@ electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
 mechanics_address = config('READER_ADDRESS_SUPPLIER2')
 mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
 
-reader_address = manufacturer_address
-private_key = manufacturer_private_key
+reader_address = electronics_address
+private_key = electronics_private_key
 
 # Connection to SQLite3 reader database
 conn = sqlite3.connect('files/reader/reader.db')
@@ -25,6 +25,9 @@ x = conn.cursor()
 
 def generate_keys():
     (publicKey, privateKey) = rsa.newkeys(1024)
+    print(publicKey)
+    print()
+    print(privateKey)
     publicKey_store = publicKey.save_pkcs1().decode('utf-8')
     privateKey_store = privateKey.save_pkcs1().decode('utf-8')
 
@@ -36,10 +39,10 @@ def generate_keys():
     hash_file = api.add_json(f.read())
     print(hash_file)
 
-    x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?)", (privateKey_store,))
+    x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?)", (reader_address, privateKey_store))
     conn.commit()
 
-    x.execute("INSERT OR IGNORE INTO rsa_public_key VALUES (?,?,?)", (hash_file, publicKey_store))
+    x.execute("INSERT OR IGNORE INTO rsa_public_key VALUES (?,?,?)", (reader_address, hash_file, publicKey_store))
     conn.commit()
 
     # name_file1 = 'files/keys_readers/private_key_' + str(reader_address) + '.txt'

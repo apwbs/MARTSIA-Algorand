@@ -74,11 +74,6 @@ def generate_key(x):
     cipher_generated_key(reader_address, process_instance_id, key)
 
 
-# Connection to SQLite3 authority1_database database
-conn = sqlite3.connect('files/authority1/authority1.db')
-x = conn.cursor()
-
-
 def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
     public_key_ipfs_link = retriever.retrieveReaderPublicKey(app_id_pk_readers, reader_address)
     getfile = api.cat(public_key_ipfs_link)

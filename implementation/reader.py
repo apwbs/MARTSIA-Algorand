@@ -74,14 +74,15 @@ def generate_public_parameters():
         getfile = api.cat(check_parameters[0])
         getfile = getfile.decode('utf-8').rstrip('"').lstrip('"')
         getfile = getfile.encode('utf-8')
-        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?)", (process_instance_id, getfile))
+        x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)",
+                  (process_instance_id, check_parameters[0], getfile))
         conn.commit()
 
 
 def retrieve_public_parameters(process_instance_id):
     x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
     result = x.fetchall()
-    public_parameters = result[0][1]
+    public_parameters = result[0][2]
     return public_parameters
 
 
@@ -115,25 +116,25 @@ def main(process_instance_id, message_id, slice_id):
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
               (process_instance_id, authority1_address))
     result = x.fetchall()
-    user_sk1 = result[0][2]
+    user_sk1 = result[0][3]
     user_sk1 = bytesToObject(user_sk1, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
               (process_instance_id, authority2_address))
     result = x.fetchall()
-    user_sk2 = result[0][2]
+    user_sk2 = result[0][3]
     user_sk2 = bytesToObject(user_sk2, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
               (process_instance_id, authority3_address))
     result = x.fetchall()
-    user_sk3 = result[0][2]
+    user_sk3 = result[0][3]
     user_sk3 = bytesToObject(user_sk3, groupObj)
 
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
               (process_instance_id, authority4_address))
     result = x.fetchall()
-    user_sk4 = result[0][2]
+    user_sk4 = result[0][3]
     user_sk4 = bytesToObject(user_sk4, groupObj)
 
     user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
@@ -162,7 +163,7 @@ if __name__ == '__main__':
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
     process_instance_id = app_id_box
-    # generate_public_parameters()
-    message_id = 17368284034478933045
-    slice_id = 10528838083527939354
-    main(process_instance_id, message_id, slice_id)
+    generate_public_parameters()
+    # message_id = 17368284034478933045
+    # slice_id = 10528838083527939354
+    # main(process_instance_id, message_id, slice_id)

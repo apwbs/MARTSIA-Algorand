@@ -61,8 +61,8 @@ def retrieve_key(transaction):
             message = rsa.decrypt(j, privateKey_usable)
             final_bytes = final_bytes + message
 
-        x.execute("INSERT OR IGNORE INTO authorities_generated_decription_keys VALUES (?,?,?)",
-                  (process_instance_id, authority_address, final_bytes))
+        x.execute("INSERT OR IGNORE INTO authorities_generated_decription_keys VALUES (?,?,?,?)",
+                  (process_instance_id, authority_address, ipfs_link, final_bytes))
         conn.commit()
 
         # with open('files/reader/user_sk4_' + str(process_instance_id) + '.txt', "wb") as text_file:

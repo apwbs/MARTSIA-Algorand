@@ -25,9 +25,6 @@ x = conn.cursor()
 
 def generate_keys():
     (publicKey, privateKey) = rsa.newkeys(1024)
-    print(publicKey)
-    print()
-    print(privateKey)
     publicKey_store = publicKey.save_pkcs1().decode('utf-8')
     privateKey_store = privateKey.save_pkcs1().decode('utf-8')
 

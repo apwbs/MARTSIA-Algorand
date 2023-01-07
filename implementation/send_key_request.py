@@ -73,12 +73,13 @@ def send_key_request():
     # params.fee = 1000
     note = 'generate your part of my key,bob,' + str(app_id_box)
     note_encoded = note.encode()
-    receiver = authority1_address
+    receiver = authority4_address
 
     unsigned_txn = PaymentTxn(my_address, params, receiver, 0, None, note_encoded)
 
     # sign transaction
     signed_txn = unsigned_txn.sign(private_key)
+
     # send transaction
     txid = algod_client.send_transaction(signed_txn)
     print("Send transaction with txID: {}".format(txid))

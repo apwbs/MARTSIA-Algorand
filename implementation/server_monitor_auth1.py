@@ -60,6 +60,7 @@ def send_ipfs_link(reader_address, process_instance_id, hash_file):
 
     # sign transaction
     signed_txn = unsigned_txn.sign(private_key)
+
     # send transaction
     txid = algod_client.send_transaction(signed_txn)
     print("Send transaction with txID: {}".format(txid))
@@ -84,8 +85,6 @@ def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
     getfile = getfile.split(b'###')
     if getfile[0].split(b': ')[1].decode('utf-8') == reader_address:
         publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1].rstrip(b'"').replace(b'\\n', b'\n'))
-        # print(publicKey_usable)
-        # exit()
 
         info = [generated_ma_key[i:i + 117] for i in range(0, len(generated_ma_key), 117)]
 
@@ -95,33 +94,11 @@ def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
             f.write(crypto)
         f.seek(0)
 
-        # info = b'ciao'
-        # f = io.BytesIO()
-        # crypto = rsa.encrypt(info, publicKey_usable)
-        # f.write(crypto)
-        # f.seek(0)
-
         file_to_str = f.read()
-        print(file_to_str)
-        print()
         j = base64.b64encode(file_to_str).decode('ascii')
         s = json.dumps(j)
-        print(s)
-        # j2 = json.loads(s)
-        # data2 = base64.b64decode(j2['data'])
-        # print(type(data2))
-        # exit()
         hash_file = api.add_json(s)
         print(hash_file)
-
-        # x.execute("SELECT * FROM rsa_private_key WHERE reader_address=?", (reader_address,))
-        # result = x.fetchall()
-        # pk = result[0][1]
-        # privateKey_usable = rsa.PrivateKey.load_pkcs1(pk)
-        #
-        # message = rsa.decrypt(crypto, privateKey_usable)
-        # print(message)
-        # exit()
 
         # name_file = 'files/keys_readers/generated_key_ciphered_' + str(reader_address) + '_' \
         #             + str(process_instance_id) + '.txt'

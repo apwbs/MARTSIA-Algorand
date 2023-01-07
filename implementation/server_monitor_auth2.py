@@ -10,6 +10,7 @@ from algosdk.v2client import algod
 from algosdk import mnemonic, account
 from algosdk.future.transaction import PaymentTxn
 import ipfshttpclient
+import io
 
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
@@ -58,6 +59,7 @@ def send_ipfs_link(reader_address, process_instance_id, hash_file):
 
     # sign transaction
     signed_txn = unsigned_txn.sign(private_key)
+
     # send transaction
     txid = algod_client.send_transaction(signed_txn)
     print("Send transaction with txID: {}".format(txid))
@@ -76,27 +78,27 @@ def cipher_generated_key(reader_address, process_instance_id, generated_ma_key):
     getfile = api.cat(public_key_ipfs_link)
     getfile = getfile.split(b'###')
     if getfile[0].split(b': ')[1].decode('utf-8') == reader_address:
-        publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1])
+        publicKey_usable = rsa.PublicKey.load_pkcs1(getfile[1].rstrip(b'"').replace(b'\\n', b'\n'))
 
         info = [generated_ma_key[i:i + 117] for i in range(0, len(generated_ma_key), 117)]
 
-        name_file = 'files/keys_readers/generated_key_ciphered_' + str(reader_address) + '_' \
-                    + str(process_instance_id) + '.txt'
-
+        f = io.BytesIO()
         for part in info:
             crypto = rsa.encrypt(part, publicKey_usable)
-            with open(name_file, 'ab') as ipfs:
-                ipfs.write(crypto)
+            f.write(crypto)
+        f.seek(0)
 
-        new_file = api.add(name_file)
-        hash_file = new_file['Hash']
-        print(f'ipfs hash: {hash_file}')
+        file_to_str = f.read()
+        j = base64.b64encode(file_to_str).decode('ascii')
+        s = json.dumps(j)
+        hash_file = api.add_json(s)
+        print(hash_file)
 
         send_ipfs_link(reader_address, process_instance_id, hash_file)
 
 
 def transactions_monitoring():
-    min_round = 26453842
+    min_round = 26827544
     transactions = []
     note = 'generate your part of my key'
     while True:

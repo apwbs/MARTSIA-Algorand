@@ -45,7 +45,7 @@ def generate_key_auth1(gid, process_instance_id, reader_address):
 
 def generate_number_to_sign(process_instance_id, reader_address):
     # Connection to SQLite3 authority1 database
-    connection = sqlite3.connect('files/authority1/authority1_database.db')
+    connection = sqlite3.connect('files/authority1/authority1.db')
     x = connection.cursor()
 
     now = datetime.now()
@@ -65,7 +65,7 @@ def check_handshake(process_instance_id, reader_address, signature):
     #     number_to_sign = r.read()
 
     # Connection to SQLite3 authority1 database
-    connection = sqlite3.connect('files/authority1/authority1_database.db')
+    connection = sqlite3.connect('files/authority1/authority1.db')
     x = connection.cursor()
 
     x.execute("SELECT * FROM handshake_numbers WHERE process_instance=? AND reader_address=?",

@@ -13,7 +13,7 @@ app_id_attribute = config('APPLICATION_ID_CERTIFIER')
 
 def retrieve_public_parameters(process_instance_id):
     # Connection to SQLite3 authority3 database
-    conn = sqlite3.connect('files/authority3/authority3_database.db')
+    conn = sqlite3.connect('files/authority3/authority3.db')
     x = conn.cursor()
 
     x.execute("SELECT * FROM public_parameters WHERE process_instance=?", (process_instance_id,))
@@ -24,7 +24,7 @@ def retrieve_public_parameters(process_instance_id):
 
 def generate_user_key(gid, process_instance_id, reader_address):
     # Connection to SQLite3 authority3 database
-    conn = sqlite3.connect('files/authority3/authority3_database.db')
+    conn = sqlite3.connect('files/authority3/authority3.db')
     x = conn.cursor()
 
     groupObj = PairingGroup('SS512')

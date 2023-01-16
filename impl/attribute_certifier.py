@@ -61,7 +61,7 @@ def generate_attributes():
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+    print(os.system('python3.10 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
                     (certifier_private_key, app_id_certifier, process_instance_id, hash_file)))
 
     # g = io.StringIO()
@@ -69,7 +69,7 @@ def generate_attributes():
     # g.seek(0)
     # hash_file = api.add_json(g.read())
     # print(f'ipfs hash: {hash_file}')
-    # print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+    # print(os.system('python3.10 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
     #                 (certifier_private_key, app_id_certifier, 12311111111111, hash_file)))
 
 

@@ -40,7 +40,7 @@ def merge_dicts(*dict_args):
 def retrieve_data(authority_address):
     method = 'read_specific_box'
     box_name = base64.b64encode(decode_address(authority_address))
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                              app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
@@ -172,6 +172,6 @@ if __name__ == '__main__':
 
     process_instance_id = int(app_id_box)
     # generate_public_parameters()
-    message_id = 6298308065228631623
-    slice_id = 14409851932818316068
+    message_id = 17149713040810547922
+    slice_id = 6123765222549631388
     main(process_instance_id, message_id, slice_id)

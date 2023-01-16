@@ -33,7 +33,7 @@ x = conn.cursor()
 def retrieve_data(authority_address):
     method = 'read_specific_box'
     box_name = base64.b64encode(decode_address(authority_address))
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                              app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
@@ -231,7 +231,7 @@ def main(groupObj, maabe, api, process_instance_id):
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.11 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
         data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))
 
 

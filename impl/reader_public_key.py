@@ -59,7 +59,7 @@ def generate_keys():
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.11 blockchain/PublicKeysReadersContract/PKReadersContractMain.py %s %s %s' % (
+    print(os.system('python3.10 blockchain/PublicKeysReadersContract/PKReadersContractMain.py %s %s %s' % (
         private_key, app_id_pk_readers, hash_file)))
 
 

@@ -48,7 +48,7 @@ def generate_attributes():
     x.execute("INSERT OR IGNORE INTO user_attributes VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
     conn.commit()
 
-    print(os.system('python3.11 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+    print(os.system('python3.10 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
                     (certifier_private_key, app_id_certifier, process_instance_id, hash_file)))
 
     # g = io.StringIO()

@@ -37,13 +37,15 @@ def generate_attributes():
     }
 
     f = io.StringIO()
-    f.write(str(dict_users))
+    dict_users_dumped = json.dumps(dict_users)
+    f.write('"process_instance_id": ' + str(process_instance_id) + '####')
+    f.write(dict_users_dumped)
     f.seek(0)
 
     file_to_str = f.read()
 
     hash_file = api.add_json(file_to_str)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO user_attributes VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
     conn.commit()

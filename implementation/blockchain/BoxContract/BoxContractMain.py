@@ -10,14 +10,14 @@ from algosdk.v2client import indexer
 
 
 creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
-algod_address = "https://betanet-algorand.api.purestake.io/ps2"
+algod_address = "https://testnet-algorand.api.purestake.io/ps2"
 algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
 headers = {
     "X-API-Key": algod_token,
 }
 
 
-indexer_address = "https://betanet-algorand.api.purestake.io/idx2"
+indexer_address = "https://testnet-algorand.api.purestake.io/idx2"
 indexer_token = ""
 indexer_client = indexer.IndexerClient(indexer_token, indexer_address, headers)
 
@@ -202,5 +202,5 @@ if __name__ == "__main__":
     # with open('../../files/process_instance_id.txt', 'w') as piw:
     #     piw.write(str(app_id))
     # print(app_id)
-    # app_id = 1387640806
+    # app_id = 156680326
     # fund_program(app_id)

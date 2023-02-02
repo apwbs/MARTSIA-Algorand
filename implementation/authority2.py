@@ -51,7 +51,7 @@ def save_authorities_names(api, process_instance_id):
     conn.commit()
 
     method = 'put_box'
-    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority2_private_key, method, app_id_box, authorities_name_padded)))
 
 
@@ -64,7 +64,7 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     conn.commit()
 
     method = 'read_box'
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
     authorities = result[:47]
     hashed = authorities + h1_2 + ',' + h2_2 + '#'
@@ -72,7 +72,7 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     hashed_padded = hashed + padding
 
     method = 'put_box'
-    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority2_private_key, method, app_id_box, hashed_padded)))
 
     g1_2_bytes = groupObj.serialize(g1_2)
@@ -89,7 +89,7 @@ def initial_parameters(process_instance_id):
     g2_2_bytes = result[0][2]
 
     method = 'read_box'
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
     elements = g1_2_bytes.decode('utf-8') + ',' + g2_2_bytes.decode('utf-8') + '#'
@@ -98,7 +98,7 @@ def initial_parameters(process_instance_id):
     hashed_elements_padded = hashed_elements + padding
 
     method = 'put_box'
-    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority2_private_key, method, app_id_box, hashed_elements_padded)))
 
 
@@ -120,7 +120,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     #######AUTH1########
     ####################
     box_name = base64.b64encode(decode_address(authority1_address))
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                              app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
@@ -135,7 +135,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     #######AUTH3########
     ####################
     box_name = base64.b64encode(decode_address(authority3_address))
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                              app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
@@ -150,7 +150,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     #######AUTH4########
     ####################
     box_name = base64.b64encode(decode_address(authority4_address))
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                              app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
     result = ast.literal_eval(result)
     all_elements = base64.b64decode(result['value']).decode('utf-8')
@@ -204,7 +204,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     conn.commit()
 
     method = 'read_box'
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
     hashed_elements_pp = result[:359] + hash_file + '#'
@@ -212,7 +212,7 @@ def generate_public_parameters(groupObj, maabe, api, process_instance_id):
     hashed_elements_pp_padded = hashed_elements_pp + padding
 
     method = 'put_box'
-    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority2_private_key, method, app_id_box, hashed_elements_pp_padded)))
 
 
@@ -247,12 +247,12 @@ def generate_pk_sk(groupObj, maabe, api, process_instance_id):
     conn.commit()
 
     method = 'read_box'
-    result = subprocess.run(['python3.11', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority2_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
     hashed_elements_pp_pk = result[:406] + hash_file
 
     method = 'put_box'
-    print(os.system('python3.11 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority2_private_key, method, app_id_box, hashed_elements_pp_pk)))
 
 

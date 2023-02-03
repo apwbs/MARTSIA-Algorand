@@ -1,5 +1,5 @@
 # MARTSIA-Algorand
-change algo_token in create_account script
+hide mnemonic, algo_token and algod_address in create_account script
 #### This repository contains the Algorand-based implementation of the MARTSIA approach. 
 
 ### Guide

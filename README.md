@@ -30,7 +30,7 @@ If the installation of 'charm' fails, try running these commands:
 8. sudo make install
 9. pip install sovrin
 
-If the installation fails, try these commands too:
+If the installation fails again, try these commands too:
 1. sudo apt-get git
 2. sudo apt-get install m4
 3. git clone https://github.com/JHUISI/charm.git
@@ -41,12 +41,14 @@ If the installation fails, try these commands too:
 8. sudo ldconfig
 9. sudo -H pip install sovrin
 
-The first thing to do is to deploy the smart contracts (applications id) on the blockchain. 
+The first thing to do is to deploy the smart contracts (applications id) on the blockchain (we use the testnet). 
 To do that, create an Algorand account running `python3.10 account_creation.py`. To obtain an 'algod_address' and 
-an algo_token, create an account on [PureStake](https://developer.purestake.io/). 
-In the Main files of the application_ids (smart contracts that you can find in the blockchain folder), modify the 
-'algod_address' constant with the testnet-algorand API (ps2) and copy your token in the 'algo_token' constant. Change 
-the mnemonic constant with the one obtained during the generation of the account.
+an algo_token, create an account on [PureStake](https://developer.purestake.io/). Then, fund the account with the 
+[Algorand dispenser for the testnet](https://bank.testnet.algorand.network/).
+
+For actually create the contracts, in the Main files of the application_ids (smart contracts that you can find in the blockchain folder), 
+modify the 'algod_address' constant with the testnet-algorand API (ps2) and copy your token in the 'algo_token' constant. 
+Change the mnemonic constant with the one obtained during the generation of the account.
 Run the contractMainCreation file with `python3.10 name_of_contractMainCreation.py` to generate the '.teal' and '.json' files 
 and to generate, upload and fund the contract. Once obtained all the application ids, copy them in the right constant in the
 '.env' file.

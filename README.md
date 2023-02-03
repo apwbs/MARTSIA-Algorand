@@ -7,7 +7,12 @@ hide mnemonic, algo_token and algod_address in create_account script
 ### Requirements
 
 In order to run the system, it is (strongly) recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
-or more containers from that image. The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
+or more containers from that image. To do this, firstly use the DockerFile running `docker build -t image_name PATH_TO_THE_DOCKERFILE/DockerFiles/`
+to create a docker image. Then run `docker run -it -v PATH_TO_MARTSIA-AlgorandFOLDER/MARTSIA-Algorand/:/MARTSIA-Algorand image_name`
+to create a container starting from the image created in the previous step. To run the first instance of a container run
+`docker start container_name`, then run `docker attach container_name`. To run other independent instances of the same container run
+`docker exec -it container_name bin/bash`.
+The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
 [python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html), 
 [Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/), sqlite3 (python3 -m pip install sqlite3), 

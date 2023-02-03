@@ -1,6 +1,6 @@
 # MARTSIA-Algorand
 
-#### This repository contains the Ethereum-based version of the MARTSIA approach. 
+#### This repository contains the Algorand-based implementation of the MARTSIA approach. 
 
 ### Guide
 

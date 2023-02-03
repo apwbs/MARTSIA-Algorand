@@ -262,6 +262,11 @@ def main():
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
     process_instance_id = int(app_id_box)
 
+    ###########
+    ###########
+    ###LINES###
+    ###########
+    ###########
     # save_authorities_names(api, process_instance_id)
     # initial_parameters_hashed(groupObj, process_instance_id)
     # initial_parameters(process_instance_id)

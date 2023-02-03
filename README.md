@@ -72,7 +72,7 @@ Then run 'python3 attribute_certifier.py' to store those values both in the cert
 process_instance_id number in the .env file.
 
 In order to instantiate the four authorities with multi-party computation, open authority1.py, authority2.py
-authority3.py and authority4.py. Consider the lines 185-189 of the first file and lines 341-345 of the remaining three.
+authority3.py and authority4.py. Consider the lines highlighted with `###LINES###` in the files.
 Run the function 'save_authorities_names()' for all the authorities. Then, after all the authorities have completed this step,
 run 'initial_parameters_hashed()' for all the authorities. Then run the other three functions with the same procedure, namely
 run the third function for all the authorities, then the fourth function of all the authorities and so on. At the end of this 
@@ -80,7 +80,8 @@ procedure, the authorities are instantiated via multi-party computation, and the
 
 To cipher a message and store it on the blockchain, open the 'data_owner.py' file. Firstly, run 'generate_pp_pk()' to 
 instantiate the data owner, then modify the file 'data.json' with the data you want to cipher. Then, run the main() function, but
-remember to modify the access policy and the entries that you need to cipher with a particular policy: lines 132-139.
+remember to modify the access policy and the entries that you need to cipher with a particular policy: 
+lines highlighted with `###LINES###` in the file.
 
 To obtain a key from the authorities there are two ways. The first one is to send a request using an SLL client-server connection,
 the second option is to send a key request on chain and get an IPFS link on chain to open. To send a request via SSL, open

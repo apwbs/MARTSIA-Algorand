@@ -72,7 +72,7 @@ Then run 'python3 attribute_certifier.py' to store those values both in the cert
 process_instance_id number in the .env file.
 
 In order to instantiate the four authorities with multi-party computation, open authority1.py, authority2.py
-authority3.py and authority4.py. Consider the lines 185-189 of the first file and lines 182-186 of the remaining three.
+authority3.py and authority4.py. Consider the lines 185-189 of the first file and lines 341-345 of the remaining three.
 Run the function 'save_authorities_names()' for all the authorities. Then, after all the authorities have completed this step,
 run 'initial_parameters_hashed()' for all the authorities. Then run the other three functions with the same procedure, namely
 run the third function for all the authorities, then the fourth function of all the authorities and so on. At the end of this 

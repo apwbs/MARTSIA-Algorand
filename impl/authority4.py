@@ -1,5 +1,3 @@
-import json
-
 from charm.toolbox.pairinggroup import *
 from maabe_class import *
 import mpc_setup

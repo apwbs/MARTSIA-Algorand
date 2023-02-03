@@ -51,6 +51,9 @@ If the installation fails again, try these commands too:
 8. sudo ldconfig
 9. sudo -H pip install sovrin
 
+In order to check if 'charm' is successfully installed, try run `python3` and then `import charm`. If there are no 
+errors, the package is installed correctly.
+
 ### Contracts deployment
 
 The first thing to do is to deploy the smart contracts (applications id) on the blockchain (we use the testnet). 

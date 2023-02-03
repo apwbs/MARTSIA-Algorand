@@ -12,6 +12,7 @@ to create a docker image. Then run `docker run -it -v PATH_TO_MARTSIA-AlgorandFO
 to create a container starting from the image created in the previous step. To run the first instance of a container run
 `docker start container_name`, then run `docker attach container_name`. To run other independent instances of the same container run
 `docker exec -it container_name bin/bash`.
+
 The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
 [python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html), 

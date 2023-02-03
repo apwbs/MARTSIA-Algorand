@@ -34,7 +34,7 @@ def generate_keys():
     f.seek(0)
 
     hash_file = api.add_json(f.read())
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?)", (reader_address, privateKey_store))
     conn.commit()

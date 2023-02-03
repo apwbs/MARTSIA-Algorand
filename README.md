@@ -1,8 +1,10 @@
 # MARTSIA-Algorand
 hide mnemonic, algo_token and algod_address in create_account script
-#### This repository contains the Algorand-based implementation of the MARTSIA approach. 
+### This repository contains the Algorand-based implementation of the MARTSIA approach. 
 
-### Guide
+## Guide
+
+### Requirements
 
 In order to run the system, it is recommended (strongly) to install Docker and create a new image running Ubuntu 18.04 and then start one
 or more containers from that image. The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
@@ -41,6 +43,8 @@ If the installation fails again, try these commands too:
 8. sudo ldconfig
 9. sudo -H pip install sovrin
 
+### Contracts deployment
+
 The first thing to do is to deploy the smart contracts (applications id) on the blockchain (we use the testnet). 
 To do that, create an Algorand account running `python3.10 account_creation.py`. To obtain an 'algod_address' and 
 an algo_token, create an account on [PureStake](https://developer.purestake.io/). Then, fund the account with the 
@@ -56,9 +60,13 @@ For the box contract, firstly generate the '.teal' and '.json' files running `py
 MainCreation script to obtain an application id and the change the one obtained in the 'fund_program' function to fund it.
 Remember to properly comment and uncomment the lines in the "__main__".
 
+### Database creation
+
 When these passages are completed, the databases for all the actors involved in the process need to be created. 
 Move in the 'files' folder and create/copy the folders you need. To create a database run 'sqlite3 name_of_the_database.db'.
 When inside that database run '.read database.sql' to instantiate the database with the right tables.
+
+### Key pairs generation
 
 Once all these preliminary steps are completed, you can start running the actual code. And '.env' file must be created in order
 to store all the necessary values of the constants. This file must be put in the 'architecture' or 'implementation' folder.
@@ -67,9 +75,13 @@ The first thing to do is provide a pair of private and public keys to the reader
 architecture or implementation folder and run `python3 rsa_public_keys.py`. In the file specify the actors
 you intend to give a pair of keys to.
 
+### Attributes assignment
+
 Next, open the attribute certifier file and write down the attributes that you intend to give to the actors of the system.
 Then run `python3 attribute_certifier.py` to store those values both in the certifier db and on chain. Copy the resulting
 process_instance_id number in the .env file.
+
+### Authorities instantiation
 
 In order to instantiate the four authorities with multi-party computation, open authority1.py, authority2.py
 authority3.py and authority4.py. Consider the lines highlighted with `###LINES###` in the files.
@@ -78,18 +90,20 @@ run 'initial_parameters_hashed()' for all the authorities. Then run the other th
 run the third function for all the authorities, then the fourth function of all the authorities and so on. At the end of this 
 procedure, the authorities are instantiated via multi-party computation, and they are ready to generate keys for the users.
 
+### Message ciphering and delivering
+
 To cipher a message and store it on the blockchain, open the 'data_owner.py' file. Firstly, run 'generate_pp_pk()' to 
 instantiate the data owner, then modify the file 'data.json' with the data you want to cipher. Then, run the main() function, but
 remember to modify the access policy and the entries that you need to cipher with a particular policy: 
 lines highlighted with `###LINES###` in the file.
 
+### Key requests
+
 To obtain a key from the authorities there are two ways. The first one is to send a request using an SLL client-server connection,
 the second option is to send a key request on chain and get an IPFS link on chain to open. To send a request via SSL, open
 the 'client.py' file, specify the constants like 'reader_address' and gid etc. and then run `python3 server_authority*.py`. 
 Then, run python3 client.py to firstly start the handshake function and then to ask for a key. Send these two messages in different
-moments just commenting the action that you do not want to perform. Once you have obtained a part of a key from all the authorities,
-open the 'reader.py' file and run the generate_public_parameters() function. Then put the right values in the message_id and
-slice_id constants and run the main() function to read the message.
+moments just commenting the action that you do not want to perform. 
 
 To use the second way to ask for a key, you need to run the 'send_key_request()'
 function specifying the authority_address you want to invoke. Then, run `python3 server_monitor_auth*.py` to let the 
@@ -97,3 +111,9 @@ authorities monitor the blockchain and react to a key request. The authority is 
 and store it on chain. The user, in order to get the key, has to run `python3 server_monitor_reader.py` script specifying the 
 authority address invoked. The script is going to retrieve the key and store it in a private database. After having obtained 
 all the key parts, just run the 'reader.py' script as described above.
+
+### Message reading
+
+Once you have obtained a part of a key from all the authorities,
+open the 'reader.py' file and run the generate_public_parameters() function. Then put the right values in the message_id and
+slice_id constants and run the main() function to read the message.

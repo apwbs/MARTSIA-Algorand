@@ -20,7 +20,6 @@ If the installation of 'charm' fails, try running these commands:
 9. pip install sovrin
 
 If the installation fails, try these commands too:
-
 1. sudo apt-get git
 2. sudo apt-get install m4
 3. git clone https://github.com/JHUISI/charm.git
@@ -31,17 +30,8 @@ If the installation fails, try these commands too:
 8. sudo ldconfig
 9. sudo -H pip install sovrin
 
-The first thing to do is to deploy the smart contract on the blockchain. 
-To do that, create a Metamask wallet and fund an account with some Eth in the Goerli testnet with a Goerli faucet. 
-Then create an account on Infura and obtain a key for the Goerli testnet.
-
-Enter the 'blockchain' folder and create a '.env' file. Put two constants in there:
-1. 'MNEMONIC'=the secret words of the Metamask wallet
-2. 'PROJECT_ID'=the project ID obtained from Infura
-
-After doing this, open a terminal and run `truffle init`. Copy the folders 'contracts' and 'migrations' from the repo
-and also the 'truffle-config.js' file. Then run `truffle migrate --network goerli` and wait for the deployment of the 
-contract on chain.
+The first thing to do is to deploy the smart contracts (applications id) on the blockchain. 
+To do that, create an Algorand account 
 
 When these passages are completed, the databases for all the actors involved in the process need to be created. 
 Move in the 'files' folder and create/copy the folders you need. To create a database run 'sqlite3 name_of_the_database.db'.

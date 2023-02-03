@@ -118,7 +118,7 @@ function specifying the authority_address you want to invoke. Then, run `python3
 authorities monitor the blockchain and react to a key request. The authority is going to read the key request, generate a key
 and store it on chain. The user, in order to get the key, has to run `python3 server_monitor_reader.py` script specifying the 
 authority address invoked. The script is going to retrieve the key and store it in a private database. After having obtained 
-all the key parts, just run the 'reader.py' script as described above.
+all the key parts, just run the 'reader.py' script as described below.
 
 ### Message reading
 

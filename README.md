@@ -1,5 +1,5 @@
 # MARTSIA-Algorand
-
+change algo_token in create_account script
 #### This repository contains the Algorand-based implementation of the MARTSIA approach. 
 
 ### Guide
@@ -31,7 +31,17 @@ If the installation fails, try these commands too:
 9. sudo -H pip install sovrin
 
 The first thing to do is to deploy the smart contracts (applications id) on the blockchain. 
-To do that, create an Algorand account 
+To do that, create an Algorand account running `python3.10 account_creation.py`. To obtain an 'algod_address' and 
+an algo_token, create an account on [PureStake](https://developer.purestake.io/). 
+In the Main files of the application_ids (smart contracts that you can find in the blockchain folder), modify the 
+'algod_address' constant with the testnet-algorand API (ps2) and copy your token in the 'algo_token' constant. Change 
+the mnemonic constant with the one obtained during the generation of the account.
+Run the contractMainCreation file with `python3.10 name_of_contractMainCreation.py` to generate the '.teal' and '.json' files 
+and to generate, upload and fund the contract. Once obtained all the application ids, copy them in the right constant in the
+'.env' file.
+For the box contract, firstly generate the '.teal' and '.json' files running `python3.10 BoxContract.py`. Then run the
+MainCreation script to obtain an application id and the change the one obtained in the 'fund_program' function to fund it.
+Remember to properly comment and uncomment the lines in the "__main__".
 
 When these passages are completed, the databases for all the actors involved in the process need to be created. 
 Move in the 'files' folder and create/copy the folders you need. To create a database run 'sqlite3 name_of_the_database.db'.

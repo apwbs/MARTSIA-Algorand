@@ -17,7 +17,7 @@ The following libraries must be installed inside the container: python3.6, pytho
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
 [python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html), 
 [Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/), sqlite3 (python3 -m pip install sqlite3), 
-ipfs (local node) run:
+ipfs (for local node) run:
 1. python3.6 -m pip install ipfshttpclient
 2. wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz
 3. tar -xvzf go-ipfs_v0.7.0_linux-amd64.tar.gz

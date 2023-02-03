@@ -6,7 +6,7 @@ hide mnemonic, algo_token and algod_address in create_account script
 
 ### Requirements
 
-In order to run the system, it is recommended (strongly) to install Docker and create a new image running Ubuntu 18.04 and then start one
+In order to run the system, it is (strongly) recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
 or more containers from that image. The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
 [python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html), 

@@ -20,7 +20,6 @@ If the installation of 'charm' fails, try run these commands:
 9. pip install sovrin
 
 If the installation fails, try these commands too:
-
 1. sudo apt-get git
 2. sudo apt-get install m4
 3. git clone https://github.com/JHUISI/charm.git

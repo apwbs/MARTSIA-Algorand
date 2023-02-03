@@ -4,11 +4,11 @@
 
 ### Guide
 
-In order to run the system, the following libraries must be installed: python3.6, charm https://github.com/JHUISI/charm, rsa, web3 (python-version), python-decouple, truffle, sqlite3, ipfs.
+In order to run the system, the following libraries must be installed: python3.6, [charm](https://github.com/JHUISI/charm), rsa, web3 (python-version), python-decouple, truffle, sqlite3, ipfs.
 It is recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
 or more containers from that image.
 
-If the installation of 'charm' fails, try run these commands: 
+If the installation of 'charm' fails, try running these commands: 
 1. sudo apt-get install libgmp3-dev libssl-dev
 2. wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
 3. tar xvf pbc-0.5.14.tar.gz
@@ -35,12 +35,12 @@ The first thing to do is to deploy the smart contract on the blockchain.
 To do that, create a Metamask wallet and fund an account with some Eth in the Goerli testnet with a Goerli faucet. 
 Then create an account on Infura and obtain a key for the Goerli testnet.
 
-Then, move in the 'blockchain' folder and create a '.env' file. Put two constants in there:
+Enter the 'blockchain' folder and create a '.env' file. Put two constants in there:
 1. 'MNEMONIC'=the secret words of the Metamask wallet
 2. 'PROJECT_ID'=the project ID obtained from Infura
 
-After doing this, open a terminal and run 'truffle init'. Copy the folders 'contracts' and 'migrations' from the repo
-and also the 'truffle-config.js' file. Then run 'truffle migrate --network goerli' and wait for the deployment of the 
+After doing this, open a terminal and run `truffle init`. Copy the folders 'contracts' and 'migrations' from the repo
+and also the 'truffle-config.js' file. Then run `truffle migrate --network goerli` and wait for the deployment of the 
 contract on chain.
 
 When these passages are completed, the databases for all the actors involved in the process need to be created. 
@@ -58,7 +58,7 @@ Next, open the attribute certifier file and write down the attributes that you i
 Then run 'python3 attribute_certifier.py' to store those values both in the certifier db and on chain. Copy the resulting
 process_instance_id number in the .env file.
 
-In order to instantiate the four authorities with multi-party computation open the four scripts, namely authority1.py, authority2.py
+In order to instantiate the four authorities with multi-party computation, open authority1.py, authority2.py
 authority3.py and authority4.py. Consider the lines 185-189 of the first file and lines 182-186 of the remaining three.
 Run the function 'save_authorities_names()' for all the authorities. Then, after all the authorities have completed this step,
 run 'initial_parameters_hashed()' for all the authorities. Then run the other three functions with the same procedure, namely

@@ -72,7 +72,7 @@ def retrieve_key(transaction):
 
 
 def transactions_monitoring():
-    min_round = 26828719
+    min_round = 27497785
     transactions = []
     while True:
         response = indexer_client.search_transactions_by_address(address=reader_address, min_round=min_round,

@@ -164,6 +164,6 @@ if __name__ == '__main__':
 
     process_instance_id = app_id_box
     # generate_public_parameters()
-    message_id = 17992127434020893006
-    slice_id = 8400255967110086898
+    message_id = 4425557368350997437
+    slice_id = 1139373568972963751
     main(process_instance_id, message_id, slice_id)

@@ -110,13 +110,13 @@ lines highlighted with `###LINES###` in the file.
 
 ### Key requests
 
-To obtain a key from the authorities there are two ways. The first one is to send a request using an SLL client-server connection,
+To obtain a key from the authorities there are two ways. The first one (the one in the main) is to send a request using an SLL client-server connection,
 the second option is to send a key request on chain and get an IPFS link on chain to open. To send a request via SSL, open
 the 'client.py' file, specify the constants like 'reader_address', 'gid' etc. and then run `python3 server_authority*.py`. 
 Then, run python3 client.py to firstly start the handshake function and then to ask for a key. Send these two messages in different
 moments just commenting the action that you do not want to perform. 
 
-To use the second way to ask for a key, you need to run the 'send_key_request()'
+To use the second way (the one in the 'key_on_block' branch) to ask for a key, you need to run the 'send_key_request()'
 function specifying the authority_address you want to invoke. Then, run `python3 server_monitor_auth*.py` to let the 
 authorities monitor the blockchain and react to a key request. The authority is going to read the key request, generate a key
 and store it on chain. The user, in order to get the key, has to run `python3 server_monitor_reader.py` script specifying the 

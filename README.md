@@ -82,9 +82,9 @@ When inside that database run '.read database.sql' to instantiate the database w
 Once all these preliminary steps are completed, you can start running the actual code. An '.env' file must be created in order
 to store all the necessary values of the constants. This file must be put in the 'architecture' or 'implementation' folder.
 
-The first thing to do is provide a pair of private and public keys to the readers. Open a terminal and move in the 
-architecture or implementation folder and run `python3 rsa_public_keys.py`. In the file specify the actors
-you intend to give a pair of keys to.
+The first thing to do is provide a pair of private and public keys to the readers. Open a container terminal and move in the 
+architecture or implementation folder and run `python3 rsa_public_keys.py`. In the file, specify the actors you want 
+to give a key pair.
 
 ### Attributes assignment
 

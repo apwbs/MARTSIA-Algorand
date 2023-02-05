@@ -112,7 +112,7 @@ lines highlighted with `###LINES###` in the file.
 
 To obtain a key from the authorities there are two ways. The first one is to send a request using an SLL client-server connection,
 the second option is to send a key request on chain and get an IPFS link on chain to open. To send a request via SSL, open
-the 'client.py' file, specify the constants like 'reader_address' and gid etc. and then run `python3 server_authority*.py`. 
+the 'client.py' file, specify the constants like 'reader_address', 'gid' etc. and then run `python3 server_authority*.py`. 
 Then, run python3 client.py to firstly start the handshake function and then to ask for a key. Send these two messages in different
 moments just commenting the action that you do not want to perform. 
 
@@ -126,5 +126,5 @@ all the key parts, just run the 'reader.py' script as described below.
 ### Message reading
 
 Once you have obtained a part of a key from all the authorities,
-open the 'reader.py' file and run the generate_public_parameters() function. Then put the right values in the message_id and
-slice_id constants and run the main() function to read the message.
+open the 'reader.py' file and run the generate_public_parameters() function. Then put the right values in the 'message_id' and
+'slice_id' constants and run the main() function to read the message.

@@ -142,11 +142,11 @@ def main(groupObj, maabe, api, process_instance_id):
 
     f = open('files/data.json')
     data = json.load(f)
-    access_policy = ['(156875567@UT and 156875567@OU and 156875567@OT and 156875567@TU) and (MANUFACTURER@UT or '
+    access_policy = ['(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or '
                      'SUPPLIER@OU)',
-                     '(156875567@UT and 156875567@OU and 156875567@OT and 156875567@TU) and (MANUFACTURER@UT or ('
+                     '(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and ELECTRONICS@OT)',
-                     '(156875567@UT and 156875567@OU and 156875567@OT and 156875567@TU) and (MANUFACTURER@UT or ('
+                     '(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and MECHANICS@TU)']
 
     entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
@@ -208,7 +208,7 @@ def main(groupObj, maabe, api, process_instance_id):
     # encoded = cryptocode.encrypt("Ciao Marzia!", str(key_encrypt1))
 
     hash_file = api.add_json(json_total)
-    print(hash_file)
+    print(f'ipfs hash: {hash_file}')
 
     x.execute("INSERT OR IGNORE INTO messages VALUES (?,?,?,?)",
               (process_instance_id, str(message_id), hash_file, str(json_total)))

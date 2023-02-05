@@ -113,7 +113,7 @@ lines highlighted with `###LINES###` in the file.
 To obtain a key from the authorities there are two ways. The first one (the one in the main) is to send a request using an SLL client-server connection,
 the second option is to send a key request on chain and get an IPFS link on chain to open. To send a request via SSL, open
 the 'client.py' file, specify the constants like 'reader_address', 'gid' etc. and then run `python3 server_authority*.py`. 
-Then, run python3 client.py to firstly start the handshake function and then to ask for a key. Send these two messages in different
+Then, run `python3 client.py` to firstly start the handshake function and then to ask for a key. Send these two messages in different
 moments just commenting the action that you do not want to perform. 
 
 To use the second way (the one in the 'key_on_block' branch) to ask for a key, you need to run the 'send_key_request()'

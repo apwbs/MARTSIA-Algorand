@@ -16,8 +16,8 @@ electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
 mechanics_address = config('READER_ADDRESS_SUPPLIER2')
 mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
 
-reader_address = electronics_address
-private_key = electronics_private_key
+reader_address = mechanics_address
+private_key = mechanics_private_key
 
 # Connection to SQLite3 reader database
 conn = sqlite3.connect('files/reader/reader.db')

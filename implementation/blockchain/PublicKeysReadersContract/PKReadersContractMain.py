@@ -2,7 +2,7 @@ from PKReadersContract import *
 from algosdk.atomic_transaction_composer import AtomicTransactionComposer
 import sys
 
-# sys.path.insert(0, '../')
+# sys.pathz.insert(0, '../')
 # from util import *
 sys.path.insert(1, 'blockchain/')
 from util import *

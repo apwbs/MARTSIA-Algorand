@@ -142,11 +142,11 @@ def main(groupObj, maabe, api, process_instance_id):
 
     f = open('files/data.json')
     data = json.load(f)
-    access_policy = ['(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or '
+    access_policy = ['(157501876@UT and 157501876@OU and 157501876@OT and 157501876@TU) and (MANUFACTURER@UT or '
                      'SUPPLIER@OU)',
-                     '(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or ('
+                     '(157501876@UT and 157501876@OU and 157501876@OT and 157501876@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and ELECTRONICS@OT)',
-                     '(157172146@UT and 157172146@OU and 157172146@OT and 157172146@TU) and (MANUFACTURER@UT or ('
+                     '(157501876@UT and 157501876@OU and 157501876@OT and 157501876@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and MECHANICS@TU)']
 
     entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]

@@ -69,7 +69,7 @@ and to generate, upload and fund the contract. Once obtained all the application
 '.env' file.
 For the box contract, firstly generate the '.teal' and '.json' files running `python3.10 BoxContract.py`. Then run the
 MainCreation script to obtain an application id and the change the one obtained in the 'fund_program' function to fund it.
-Remember to properly comment and uncomment the lines in the "__main__".
+Remember to properly comment and uncomment the `###1st run###` and `###2nd run###` lines in the "__main__".
 
 ### Database creation
 

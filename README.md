@@ -11,14 +11,14 @@ or more containers from that image. To do this, firstly use the DockerFile runni
 to create a docker image. Then run `docker run -it -v PATH_TO_MARTSIA-AlgorandFOLDER/MARTSIA-Algorand/:/MARTSIA-Algorand image_name`
 to create a container starting from the image created in the previous step. To run the first instance of a container run
 `docker start container_name`, then run `docker attach container_name`. To run other independent instances of the same container run
-`docker exec -it container_name bin/bash`. (Running other instances (from the second on) of the same container with 
-`docker start` and `docker attach`) will not make them independent. Every command in one instance will be applied also in the
+`docker exec -it container_name bin/bash`. Running other instances (from the second on) of the same container with 
+`docker start` and `docker attach` will not make them independent. Every command in one instance will be applied also in the
 other instances. Using `docker exec` you can open as many independent containers as you like.
 
 The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
-[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html), 
-[Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/), sqlite3 (python3 -m pip install sqlite3), 
+[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html) (for python3.10), 
+[Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/)(for python3.10), sqlite3 (python3 -m pip install sqlite3), 
 ipfs (for local node) run:
 1. python3.6 -m pip install ipfshttpclient
 2. wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz
@@ -74,8 +74,8 @@ Remember to properly comment and uncomment the lines in the "__main__".
 ### Database creation
 
 When these passages are completed, the databases for all the actors involved in the process need to be created. 
-Move in the 'files' folder and create/copy the folders you need. To create a database run 'sqlite3 name_of_the_database.db'.
-When inside that database run '.read database.sql' to instantiate the database with the right tables.
+Move in the 'files' folder and create/copy the folders you need. To create a database run `sqlite3 name_of_the_database.db`.
+When inside that database run `.read database.sql` to instantiate the database with the right tables.
 
 ### Key pairs generation
 

@@ -116,4 +116,4 @@ if __name__ == "__main__":
     app_id = create_test_app()
     print(app_id)
     # app_id = 154291405
-    # fund_program(154291405)
+    # fund_program(app_id)

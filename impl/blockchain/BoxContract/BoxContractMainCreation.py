@@ -113,7 +113,14 @@ def fund_program(app_id: int):
 
 
 if __name__ == "__main__":
+    #############
+    ###1st run###
+    #############
     app_id = create_test_app()
     print(app_id)
+
+    #############
+    ###2nd run###
+    #############
     # app_id = 154291405
     # fund_program(app_id)

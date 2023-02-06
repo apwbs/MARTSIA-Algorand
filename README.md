@@ -51,7 +51,7 @@ If the installation fails again, try these commands too:
 8. sudo ldconfig
 9. sudo -H pip install sovrin
 
-In order to check if 'charm' is successfully installed, try run `python3` (inside the container) and then `import charm`. 
+In order to check if 'charm' is successfully installed, try run `python3.6` (inside the container) and then `import charm`. 
 If there are no errors displayed, the package is correctly installed.
 
 ### Contracts deployment

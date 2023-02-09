@@ -33,6 +33,7 @@ x = conn.cursor()
 def save_authorities_names(api, process_instance_id):
     f = io.StringIO()
     for i, addr in enumerate(authorities_list):
+        f.write('process_instance: ' + str(process_instance_id) + '\n')
         f.write('identification: ' + 'authority ' + str(i + 1) + '\n')
         f.write('name: ' + str(authorities_names[i]) + '\n')
         f.write('address: ' + addr + '\n\n')

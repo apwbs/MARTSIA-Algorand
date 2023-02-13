@@ -199,8 +199,6 @@ def main(params):
 if __name__ == "__main__":
     main(sys.argv)
     # app_id = create_test_app()
-    # with open('../../files/process_instance_id.txt', 'w') as piw:
-    #     piw.write(str(app_id))
     # print(app_id)
-    # app_id = 156680326
+    # app_id = 158626267
     # fund_program(app_id)

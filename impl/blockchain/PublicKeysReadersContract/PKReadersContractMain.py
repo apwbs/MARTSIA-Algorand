@@ -125,7 +125,7 @@ def main(params):
     # print('App id: ', app_id)
 
     print("--------------------------------------------")
-    print("Saving elements of an authority in the application......")
+    print("Saving reader public key in the application......")
     app_id = params[2]
     ipfs_link = params[3]
     saveData(algod_client, creator_private_key, app_id, creator_address, ipfs_link)

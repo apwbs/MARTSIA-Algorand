@@ -124,7 +124,7 @@ def main(params):
     # print('App id: ', app_id)
 
     print("--------------------------------------------")
-    print("Saving attributes of a reader in the application......")
+    print("Saving attributes of all readers in the application......")
     app_id = params[2]
     process_id = params[3]
     hash_file = params[4]

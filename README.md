@@ -17,7 +17,7 @@ other instances. Using `docker exec` you can open as many independent containers
 
 The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
-[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html) (for python3.10), 
+[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html) (version 0.20.1 for python3.10), 
 [Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/)(for python3.10), sqlite3 (python3 -m pip install sqlite3), 
 ipfs (for local node) run:
 1. python3.6 -m pip install ipfshttpclient

@@ -5,8 +5,9 @@ hide mnemonic, algo_token and algod_address in create_account script
 ## Guide
 
 ### Requirements
+There are two ways to run the system. The first one is to download the corresponding Docker Image for the Algorand implementation stored at the [Docker Hub](https://hub.docker.com/repository/docker/apwbs/martsia/general).
 
-In order to run the system, it is (strongly) recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
+Otherwise, it is (strongly) recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
 or more containers from that image. To do this, firstly use the DockerFile running `docker build -t image_name PATH_TO_THE_DOCKERFILE/DockerFiles/`
 to create a docker image. Then run `docker run -it -v PATH_TO_MARTSIA-AlgorandFOLDER/MARTSIA-Algorand/:/MARTSIA-Algorand image_name`
 to create a container starting from the image created in the previous step. To run the first instance of a container run
@@ -17,7 +18,7 @@ other instances. Using `docker exec` you can open as many independent containers
 
 The following libraries must be installed inside the container: python3.6, python3.10, [charm](https://github.com/JHUISI/charm), 
 [rsa](https://pypi.org/project/rsa/), [web3](https://web3py.readthedocs.io/en/stable/quickstart.html) (python-version), 
-[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html) (version 0.20.1 for python3.10), 
+[python-decouple](https://pypi.org/project/python-decouple/), [PyTeal](https://pyteal.readthedocs.io/en/stable/installation.html) (version 0.20.1 or 0.23.0 for python3.10), 
 [Algorand-sdk](https://py-algorand-sdk.readthedocs.io/en/latest/)(for python3.10), sqlite3 (python3 -m pip install sqlite3), 
 ipfs (for local node) run:
 1. python3.6 -m pip install ipfshttpclient

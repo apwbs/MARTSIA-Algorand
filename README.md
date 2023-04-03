@@ -1,13 +1,13 @@
 # MARTSIA-Algorand
-hide mnemonic, algo_token and algod_address in create_account script
-### This repository contains the Algorand-based implementation of the MARTSIA approach. 
+
+### #### This repository contains the Algorand implementation of the MARTSIA approach presented in the paper "[MARTSIA: Enabling Data Confidentiality for Blockchain-based Process Execution](https://arxiv.org/abs/2303.17977)". For the **Ethereum**-based implementation, please check out [https://github.com/apwbs/MARTSIA-Ethereum)!
 
 ## Guide
 
 ### Requirements
-There are two ways to run the system. The first one is to download the corresponding Docker Image for the Algorand implementation stored at the [Docker Hub](https://hub.docker.com/repository/docker/apwbs/martsia/general).
+There are two ways to run the system. The first one is to download the corresponding Docker Image for the Algorand implementation stored at the [Docker Hub](https://hub.docker.com/repository/docker/apwbs/martsia/general). This is the simplest and fastest way to run the system.
 
-Otherwise, it is (strongly) recommended to install Docker and create a new image running Ubuntu 18.04 and then start one
+Otherwise (not so much recommended), install Docker and create a new image running Ubuntu 18.04 and then start one
 or more containers from that image. To do this, firstly use the DockerFile running `docker build -t image_name PATH_TO_THE_DOCKERFILE/DockerFiles/`
 to create a docker image. Then run `docker run -it -v PATH_TO_MARTSIA-AlgorandFOLDER/MARTSIA-Algorand/:/MARTSIA-Algorand image_name`
 to create a container starting from the image created in the previous step. To run the first instance of a container run

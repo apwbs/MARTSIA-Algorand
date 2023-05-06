@@ -1,6 +1,6 @@
 import json
 from pyteal import *
-pragma(compiler_version="^0.20.1")
+pragma(compiler_version="^0.23.0")
 CONTRACT_VERSION = 8
 
 router = Router(

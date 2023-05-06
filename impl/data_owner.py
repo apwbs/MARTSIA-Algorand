@@ -158,16 +158,16 @@ def main(groupObj, maabe, api, process_instance_id):
     ###LINES###
     ###########
     ###########
-    access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+    access_policy = ['(210373012@UT and 210373012@OU and 210373012@OT and 210373012@TU) and (MANUFACTURER@UT or '
                      'SUPPLIER@OU)',
-                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     '(210373012@UT and 210373012@OU and 210373012@OT and 210373012@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and ELECTRONICS@OT)',
-                     '(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or ('
+                     '(210373012@UT and 210373012@OU and 210373012@OT and 210373012@TU) and (MANUFACTURER@UT or ('
                      'SUPPLIER@OU and MECHANICS@TU)']
 
     entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
 
-    # access_policy = ['(1387640806@UT and 1387640806@OU and 1387640806@OT and 1387640806@TU) and (MANUFACTURER@UT or '
+    # access_policy = ['(210373012@UT and 210373012@OU and 210373012@OT and 210373012@TU) and (MANUFACTURER@UT or '
     #                  'SUPPLIER@OU)']
     #
     # entries = [list(data.keys())]

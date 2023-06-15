@@ -344,11 +344,11 @@ def main():
     ###LINES###
     ###########
     ###########
-    # save_authorities_names(api, process_instance_id)
+    save_authorities_names(api, process_instance_id)
     # initial_parameters_hashed(groupObj, process_instance_id)
     # initial_parameters(process_instance_id)
     # generate_public_parameters(groupObj, maabe, api, process_instance_id)
-    generate_pk_sk(groupObj, maabe, api, process_instance_id)
+    # generate_pk_sk(groupObj, maabe, api, process_instance_id)
 
     # test = api.name.publish('/ipfs/' + hash_file)
     # print(test)

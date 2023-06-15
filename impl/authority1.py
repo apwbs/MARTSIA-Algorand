@@ -72,7 +72,7 @@ def save_authorities_names(api, process_instance_id):
     #     u1.write(result[0][1])
 
     method = 'put_box'
-    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority1_private_key, method, app_id_box, authorities_name_padded)))
 
 
@@ -91,7 +91,7 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     #     h2_1w.write(h2_1)
 
     method = 'read_box'
-    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority1_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', authority1_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
     authorities = result[:47]
     hashed = authorities + h1_1 + ',' + h2_1 + '#'
@@ -99,7 +99,7 @@ def initial_parameters_hashed(groupObj, process_instance_id):
     hashed_padded = hashed + padding
 
     method = 'put_box'
-    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority1_private_key, method, app_id_box, hashed_padded)))
 
     g1_1_bytes = groupObj.serialize(g1_1)
@@ -128,7 +128,7 @@ def initial_parameters(process_instance_id):
     #     g2_1_bytes = g2.read()
 
     method = 'read_box'
-    result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', authority1_private_key, method,
+    result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', authority1_private_key, method,
                              app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
     elements = g1_1_bytes.decode('utf-8') + ',' + g2_1_bytes.decode('utf-8') + '#'
     hashed_elements = result[:177] + elements
@@ -136,7 +136,7 @@ def initial_parameters(process_instance_id):
     hashed_elements_padded = hashed_elements + padding
 
     method = 'put_box'
-    print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+    print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
         authority1_private_key, method, app_id_box, hashed_elements_padded)))
 
 
@@ -344,9 +344,9 @@ def main():
     ###LINES###
     ###########
     ###########
-    save_authorities_names(api, process_instance_id)
+    # save_authorities_names(api, process_instance_id)
     # initial_parameters_hashed(groupObj, process_instance_id)
-    # initial_parameters(process_instance_id)
+    initial_parameters(process_instance_id)
     # generate_public_parameters(groupObj, maabe, api, process_instance_id)
     # generate_pk_sk(groupObj, maabe, api, process_instance_id)
 

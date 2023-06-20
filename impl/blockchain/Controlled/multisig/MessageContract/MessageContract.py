@@ -46,6 +46,18 @@ def getRouter():
             App.localPut(account.address(), LocalState.approved_key, Int(2)),
             Approve()
         )
+    
+
+    @router.method(no_op=CallConfig.CALL)
+    def revokeDataOwner(account: abi.Account) -> Expr:
+        return Seq(
+            Assert(
+                Txn.sender() == Global.creator_address(),
+                App.localGet(account.address(), LocalState.approved_key) == Int(2),
+            ),
+            App.localPut(account.address(), LocalState.approved_key, Int(0)),
+            Approve()
+        )
 
 
     @router.method(no_op=CallConfig.CALL)

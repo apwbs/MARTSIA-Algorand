@@ -46,6 +46,17 @@ def getRouter():
             App.localPut(account.address(), LocalState.approved_key, Int(3)),
             Approve()
         )
+    
+    @router.method(no_op=CallConfig.CALL)
+    def revokeReader(account: abi.Account) -> Expr:
+        return Seq(
+            Assert(
+                Txn.sender() == Global.creator_address(),
+                App.localGet(account.address(), LocalState.approved_key) == Int(3),
+            ),
+            App.localPut(account.address(), LocalState.approved_key, Int(0)),
+            Approve()
+        )
 
     @router.method(no_op=CallConfig.CALL)
     def on_save(reader: abi.Account, ipfs_link: abi.String) -> Expr:

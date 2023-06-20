@@ -22,7 +22,7 @@ handle_creation = Seq(
       App.globalPut(messageID, Int(0)),
       App.globalPut(IPFSLink, Int(0)), 
       Approve(),
-      )
+    )
 
 
 def getRouter():

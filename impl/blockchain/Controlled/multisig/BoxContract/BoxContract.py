@@ -43,6 +43,18 @@ def approveAuthority(account: abi.Account) -> Expr:
 
 
 @router.method(no_op=CallConfig.CALL)
+def revokeAuthority(account: abi.Account) -> Expr:
+    return Seq(
+        Assert(
+            Txn.sender() == Global.creator_address(),
+            App.localGet(account.address(), LocalState.approved_key) == Int(1),
+        ),
+        App.localPut(account.address(), LocalState.approved_key, Int(0)),
+        Approve()
+    )
+
+
+@router.method(no_op=CallConfig.CALL)
 def put(value: abi.String) -> Expr:
     """Write to a box"""
     return Seq(

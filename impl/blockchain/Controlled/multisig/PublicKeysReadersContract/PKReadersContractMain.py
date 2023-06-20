@@ -62,6 +62,7 @@ def saveData(
 
     with open("blockchain/Controlled/multisig/PublicKeysReadersContract/pk_readers_contract.json") as f:
         js = f.read()
+    
     atc.add_method_call(
         app_id=app_id,
         method=get_method('on_save', js),

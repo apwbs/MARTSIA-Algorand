@@ -59,7 +59,7 @@ def getRouter():
         )
 
     @router.method(no_op=CallConfig.CALL)
-    def on_save(reader: abi.Account, ipfs_link: abi.String) -> Expr:
+    def on_save(ipfs_link: abi.String) -> Expr:
         return Seq(
             Assert(
                 App.localGet(Txn.sender(), LocalState.approved_key) == Int(3),

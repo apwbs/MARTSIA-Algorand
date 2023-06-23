@@ -68,8 +68,8 @@ def addApprovedReader(client: algod.AlgodClient, app_id: int, toApproveAddress: 
 def main():
     algod_client = algod.AlgodClient(algod_token, algod_address, headers)
 
-    address=READER_ADDRESS_MANUFACTURER
-    app_id=239772609
+    address=READER_ADDRESS_SUPPLIER2
+    app_id=248937298
     addApprovedReader(algod_client, app_id, address)
 
 

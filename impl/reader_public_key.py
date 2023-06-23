@@ -16,8 +16,8 @@ electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
 mechanics_address = config('READER_ADDRESS_SUPPLIER2')
 mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
 
-reader_address = electronics_address
-private_key = electronics_private_key
+reader_address = mechanics_address
+private_key = mechanics_private_key
 
 # Connection to SQLite3 reader database
 conn = sqlite3.connect('files/reader/reader.db')
@@ -61,7 +61,7 @@ def generate_keys():
 
     print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
                     '%s %s' % (
-        private_key, app_id_pk_readers, hash_file)))
+                        private_key, app_id_pk_readers, hash_file)))
 
 
 if __name__ == "__main__":

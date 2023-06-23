@@ -20,9 +20,9 @@ READER_PRIVATEKEY_SUPPLIER2="b9L4YCdfVEm/tzFPH2XgoVD+a1NjwIZR+2cUR7woDjif8oGalmE
 def main():
     algod_client = algod.AlgodClient(algod_token, algod_address, headers)
 
-    address=READER_ADDRESS_SUPPLIER1
-    private_key=READER_PRIVATEKEY_SUPPLIER1
-    app_id=239772609
+    address=READER_ADDRESS_SUPPLIER2
+    private_key=READER_PRIVATEKEY_SUPPLIER2
+    app_id=248937298
 
     txn = transaction.ApplicationOptInTxn(
         sender=address,

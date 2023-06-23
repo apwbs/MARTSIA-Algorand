@@ -64,7 +64,7 @@ def getRouter():
             Assert(
                 App.localGet(Txn.sender(), LocalState.approved_key) == Int(3),
             ),
-            App.globalPut(reader_address, reader.address()),
+            App.globalPut(reader_address, Txn.sender()),
             App.globalPut(pk_reader_ipfs_link, ipfs_link.get()),
         )
 

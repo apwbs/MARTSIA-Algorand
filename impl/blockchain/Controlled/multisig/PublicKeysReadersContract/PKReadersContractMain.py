@@ -48,7 +48,6 @@ def saveData(
         client: algod.AlgodClient,
         creator: str,
         app_id: int,
-        r_address: str,
         ipfs_link: str,
 ) -> None:
     atc = AtomicTransactionComposer()
@@ -56,7 +55,6 @@ def saveData(
     sp = client.suggested_params()
 
     app_args = [
-        r_address,
         ipfs_link
     ]
 
@@ -81,7 +79,6 @@ def saveData(
 
 def main(params):
     creator_private_key = params[1]
-    creator_address = account.address_from_private_key(creator_private_key)
 
     algod_client = algod.AlgodClient(algod_token, algod_address, headers)
 
@@ -90,7 +87,7 @@ def main(params):
     print('Im using this one')
     app_id = params[2]
     ipfs_link = params[3]
-    saveData(algod_client, creator_private_key, app_id, creator_address, ipfs_link)
+    saveData(algod_client, creator_private_key, app_id, ipfs_link)
 
 
 if __name__ == "__main__":

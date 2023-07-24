@@ -12,6 +12,7 @@ from algosdk.encoding import decode_address, encode_address
 import ast
 import retriever
 import sqlite3
+import argparse
 
 app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
@@ -171,7 +172,13 @@ if __name__ == '__main__':
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
     process_instance_id = int(app_id_box)
-    # generate_public_parameters()
-    message_id = 17149713040810547922
-    slice_id = 6123765222549631388
+    parser =argparse.ArgumentParser(description="Reader details", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-m", "--message_id", type=int, help="message id", default=409349685654515625)
+    parser.add_argument("-s", "--slice_id", type=int, help="slice id", default=0)
+    parser.add_argument("-g", "--generate", action='store_true', help='Handshake')
+    args = parser.parse_args()
+    if args.generate:
+        generate_public_parameters(process_instance_id)
+    message_id = args.message_id
+    slice_id = args.slice_id
     main(process_instance_id, message_id, slice_id)

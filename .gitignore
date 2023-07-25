@@ -1,1 +1,6 @@
 *.DS_Store
+lunch_docker.sh
+*.env
+*/pyca
+__pycache__/
+impl/architecture/keys

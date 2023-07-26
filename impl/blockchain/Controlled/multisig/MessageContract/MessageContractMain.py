@@ -5,8 +5,8 @@ import sys
 import base64
 from algosdk import account
 
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }

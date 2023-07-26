@@ -85,6 +85,8 @@ def main():
 
     app_id, contract = createApp(algod_client, creator_private_key)
     print('App id: ', app_id)
+    
+    store_to_env(app_id, 'APPLICATION_ID_PK_READERS')
 
 
 if __name__ == "__main__":

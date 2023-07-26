@@ -1,0 +1,1 @@
+{"name": "StoreReaderPublicKeyContract", "methods": [{"name": "create_app", "args": [], "returns": {"type": "void"}}, {"name": "on_save", "args": [{"type": "account", "name": "reader"}, {"type": "string", "name": "ipfs_link"}], "returns": {"type": "void"}}], "networks": {}}

@@ -1,0 +1,43 @@
+{
+    "name": "box-demo",
+    "methods": [
+        {
+            "name": "put",
+            "args": [
+                {
+                    "type": "string",
+                    "name": "value"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Write to a box"
+        },
+        {
+            "name": "read",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Read from a box"
+        },
+        {
+            "name": "length",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Get the length a box value"
+        },
+        {
+            "name": "delete",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Delete a box"
+        }
+    ],
+    "networks": {}
+}

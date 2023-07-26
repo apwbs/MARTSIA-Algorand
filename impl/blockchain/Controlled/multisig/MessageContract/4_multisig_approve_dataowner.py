@@ -2,6 +2,7 @@ from algosdk.atomic_transaction_composer import *
 from algosdk import account, transaction
 from pyteal import *
 from algosdk.abi import Method, Contract
+from decuple import config
 
 private_key_1 = "VZtHXj4T2DT2atlThLRuOgPE0n+bj9sO6e/6STgm3Nqrr3giY49gyUtq/fJ5mIPp9S8clJfgy2QhgnBkybRvrg=="
 private_key_2 = "v1NEi7llgXaH66aofgHv+/8RW3MsOUmqneWc/Tm97n+IsGQHQS4zOZ6l+p9ezvUDMdxxmmua9TIPXeVfdLjhwg=="
@@ -19,13 +20,13 @@ msig = transaction.Multisig(version, threshold, [account_1, account_2])
 
 print("Multisig Address: ", msig.address())
 
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }
 
-DATAOWNER_ADDRESS='SVCAKVYOAWOUKTB4YK3DQH2SCEMAKZ3OVLXIBUANDMJNOI7COXUO34NWG4'
+DATAOWNER_ADDRESS= config("DATAOWNER_MANUFACTURER_ADDRESS")
 
 def get_method(name: str, js: str) -> Method:
     c = Contract.from_json(js)

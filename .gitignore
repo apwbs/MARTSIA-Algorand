@@ -4,3 +4,4 @@ lunch_docker.sh
 */pyca
 __pycache__/
 impl/architecture/keys
+*.db

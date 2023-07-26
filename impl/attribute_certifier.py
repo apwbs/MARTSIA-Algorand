@@ -11,9 +11,9 @@ app_id_box = config('APPLICATION_ID_BOX')
 app_id_certifier = config('APPLICATION_ID_CERTIFIER')
 certifier_private_key = config('CERTIFIER_PRIVATEKEY')
 
-manufacturer_address = config('READER_ADDRESS_MANUFACTURER')
-supplier1_address = config('READER_ADDRESS_SUPPLIER1')
-supplier2_address = config('READER_ADDRESS_SUPPLIER2')
+manufacturer_address = config('DATAOWNER_MANUFACTURER_ADDRESS')
+supplier1_address = config('READER_SUPPLIER1_ADDRESS')
+supplier2_address = config('READER_SUPPLIER2_ADDRESS')
 
 # Connection to SQLite3 attribute_certifier database
 conn = sqlite3.connect('files/attribute_certifier/attribute_certifier.db')

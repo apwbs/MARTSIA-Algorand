@@ -1,3 +1,3 @@
 sh resetDb.sh
 sh deploy.sh
-sh certification.sh
+#sh certification.sh

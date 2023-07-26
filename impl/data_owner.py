@@ -247,7 +247,7 @@ if __name__ == '__main__':
     groupObj = PairingGroup('SS512')
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
-    process_instance_id = int(process_instance_id_env)
+    process_instance_id = int(app_id_box)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-g' ,'--generate', action='store_true')

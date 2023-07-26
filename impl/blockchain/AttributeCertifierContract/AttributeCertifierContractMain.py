@@ -1,6 +1,9 @@
 from AttributeCertifierContract import *
 from algosdk.atomic_transaction_composer import AtomicTransactionComposer
 import sys
+import argparse
+from decouple import config
+
 
 # sys.path.insert(0, '../')
 # from util import *
@@ -8,9 +11,9 @@ sys.path.insert(1, 'blockchain/')
 from util import *
 
 # user declared account mnemonics
-creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+creator_mnemonic = config("CREATOR_MNEMONIC")
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }

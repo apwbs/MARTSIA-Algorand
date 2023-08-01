@@ -21,6 +21,7 @@ private_key = config(args.reader + '_PRIVATEKEY')
 conn = sqlite3.connect('files/reader/reader.db')
 x = conn.cursor()
 
+MULTISIG = config('MULTISIG') == 1
 
 def generate_keys():
     keyPair = RSA.generate(bits=1024)
@@ -57,7 +58,12 @@ def generate_keys():
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
+    if MULTISIG:
+        print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
+                    '%s %s' % (
+                        private_key, app_id_pk_readers, hash_file)))
+    else:
+        print(os.system('python3.10 blockchain/PublicKeysReadersContract/PKReadersContractMain.py %s '
                     '%s %s' % (
                         private_key, app_id_pk_readers, hash_file)))
 

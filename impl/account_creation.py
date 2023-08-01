@@ -92,9 +92,9 @@ if args.all:
     for role in READER:
         add_address_to_env(name = 'READER_' + role, overwrite = overwrite)
     for i in range(1, num_of_authoryties + 1):
-        add_address_to_env(name = 'AUTHORITY_' + str(i), overwrite = overwrite)
+        add_address_to_env(name = 'AUTHORITY' + str(i), overwrite = overwrite)
     for i in range(1, num_of_attributes_certifier + 1):
-        add_address_to_env(name = 'CERTIFIER_' + str(i), overwrite = overwrite)
+        add_address_to_env(name = 'CERTIFIER' + str(i), overwrite = overwrite)
     add_address_to_env(name = 'CREATOR', overwrite = overwrite, pass_phrase = True)
     print("All addresses and private keys are updated in .env")
 

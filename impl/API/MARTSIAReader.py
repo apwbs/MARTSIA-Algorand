@@ -125,22 +125,22 @@ class MARTSIAReader:
             user_sk = user_sk.encode()
             user_sks.append(bytesToObject(user_sk, self.groupObj))
         user_sk = {'GID': gid, 'keys': MARTSIAReader.merge_dicts(user_sks)}
-
         # decrypt
         response = retriever.retrieveMessage(self.app_id_messages, message_id)
         ciphertext_link = response[0]
         getfile = self.api.cat(ciphertext_link)
         ciphertext_dict = json.loads(getfile)
         sender = response[1]
+
         if ciphertext_dict['metadata']['process_instance_id'] == int(self.process_instance_id) \
-                and ciphertext_dict['metadata']['message_id'] == message_id \
+                and ciphertext_dict['metadata']['message_id'] == int(message_id) \
                 and ciphertext_dict['metadata']['sender'] == sender:
             slice_check = ciphertext_dict['header']
             if len(slice_check) == 1:
                 self.__actual_decryption__(ciphertext_dict['header'][0], public_parameters, user_sk, ciphertext_dict)
             elif len(slice_check) > 1:
                 for remaining in slice_check:
-                    if remaining['Slice_id'] == slice_id:
+                    if remaining['Slice_id'] == int(slice_id):
                         self.__actual_decryption__(remaining, public_parameters, user_sk, ciphertext_dict)
 
 

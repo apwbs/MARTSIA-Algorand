@@ -13,11 +13,11 @@ class MARTSIAClient(MARTSIABridge):
         reader_address (str): reader address
         slice_id (str): slice id
     """
-    def __init__(self, process_instance_id = config('PROCESS_INSTANCE_ID'), message_id = "", reader_address = "", gid = "", authority = 0):
+    def __init__(self, process_instance_id = config('APPLICATION_ID_BOX'), message_id = "", reader_address = "", gid = "", authority = 0):
         """Initialize the MARTSIAClient class
         
         Args:
-            process_instance_id (int, optional): process instance id. Defaults to config('PROCESS_INSTANCE_ID').
+            process_instance_id (int, optional): process instance id. Defaults to config('APPLICATION_ID_BOX').
             message_id (str, optional): message id. Defaults to "".
             reader_address (str, optional): reader address. Defaults to "".
             slice_id (str, optional): slice id. Defaults to "".

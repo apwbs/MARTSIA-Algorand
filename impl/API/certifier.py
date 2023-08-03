@@ -7,6 +7,9 @@ import rsa
 import random
 from datetime import datetime
 import json
+import os
+
+MULTISIG = config('MULTISIG') == 1
 
 authorities_names = ['UT', 'OU', 'OT', 'TU']
 
@@ -92,8 +95,6 @@ class Certifier():
         hash_file = api.add_json(f.read())
         print(f'ipfs hash: {hash_file}')
 
-        block_int.send_publicKey_readers(reader_address, private_key, hash_file)
-
         # reader address not necessary because each user has one key. Since we use only one 'reader/client' for all the
         # readers, we need a distinction.
         x.execute("INSERT OR IGNORE INTO rsa_private_key VALUES (?,?,?)", (reader_address, str(keyPair.n), str(keyPair.d)))
@@ -102,6 +103,15 @@ class Certifier():
         x.execute("INSERT OR IGNORE INTO rsa_public_key VALUES (?,?,?,?)",
                 (reader_address, hash_file, str(keyPair.n), str(keyPair.e)))
         conn.commit()
+
+        if MULTISIG:
+            print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
+                        '%s %s' % (
+                            private_key, config('APPLICATION_ID_PK_READERS'), hash_file)))
+        else:
+            print(os.system('python3.10 blockchain/PublicKeysReadersContract/PKReadersContractMain.py %s '
+                        '%s %s' % (
+                            private_key, config('APPLICATION_ID_PK_READERS'), hash_file)))
 
     def __store_process_id_to_env__(value):
         name = 'PROCESS_INSTANCE_ID'
@@ -134,8 +144,8 @@ class Certifier():
 
         api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001') # Connect to local IPFS node (creo un nodo locale di ipfs)
 
-        certifier_address = config('ATTRIBUTE_CERTIFIER_ADDRESS')
-        certifier_private_key = config('ATTRIBUTE_CERTIFIER_PRIVATEKEY')
+        #certifier_address = config('CERTIFIER_ADDRESS')
+        certifier_private_key = config('CERTIFIER_PRIVATEKEY')
 
         # Connection to SQLite3 attribute_certifier database
         conn = sqlite3.connect('files/attribute_certifier/attribute_certifier.db') # Connect to the database
@@ -163,11 +173,12 @@ class Certifier():
         hash_file = api.add_json(file_to_str)
         print(f'ipfs hash: {hash_file}')
         
-        block_int.send_users_attributes(config('ATTRIBUTE_CERTIFIER_ADDRESS'), config('ATTRIBUTE_CERTIFIER_PRIVATEKEY'), process_instance_id, hash_file)
-        
         x.execute("INSERT OR IGNORE INTO user_attributes VALUES (?,?,?)",
                 (str(process_instance_id), hash_file, file_to_str))
         conn.commit()
+
+        print(os.system('python3.10 blockchain/AttributeCertifierContract/AttributeCertifierContractMain.py %s %s %s %s' %
+                    (certifier_private_key, config('APPLICATION_ID_CERTIFIER'), process_instance_id, hash_file)))     
 
         Certifier.__store_process_id_to_env__(str(process_instance_id))
 

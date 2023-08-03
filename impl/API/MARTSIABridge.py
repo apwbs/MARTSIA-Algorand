@@ -25,20 +25,19 @@ class MARTSIABridge:
         client_key (str): client key
         conn (ssl.SSLSocket): connection to the server
     """
-    def __init__(self, path_to_db, port, process_instance_id = config('PROCESS_INSTANCE_ID')):
+    def __init__(self, path_to_db, port, process_instance_id = config('APPLICATION_ID_BOX')):
         """Initialize the MARTSIABridge class
 
         Args:
             path_to_db (str): path to the database
             port (int): port number
-            process_instance_id (int, optional): process instance id. Defaults to config('PROCESS_INSTANCE_ID').
+            process_instance_id (int, optional): process instance id. Defaults to config('APPLICATION_ID_BOX').
         """
         self.connection = sqlite3.connect(path_to_db)
 
         self.x = self.connection.cursor()
 
         # Read process instance id from .env file
-        #self.process_instance_id = config('PROCESS_INSTANCE_ID')
         self.process_instance_id = process_instance_id
         print("Process instance id:", self.process_instance_id)
         # Set up connection parameters

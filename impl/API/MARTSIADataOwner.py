@@ -22,6 +22,7 @@ authority4_address = config('AUTHORITY4_ADDRESS')
 dataOwner_address = config('DATAOWNER_MANUFACTURER_ADDRESS')
 dataOwner_private_key = config('DATAOWNER_MANUFACTURER_PRIVATEKEY')
 
+MULTISIG = config('MULTISIG') == 1
 #process_instance_id_env = config('PROCESS_INSTANCE_ID')
 
 class MARTSIADataOwner:
@@ -46,7 +47,6 @@ class MARTSIADataOwner:
 
 
     def __retrieve_data__(self, authority_address):
-
         method = 'read_specific_box'
         box_name = base64.b64encode(decode_address(authority_address))
         result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
@@ -160,35 +160,6 @@ class MARTSIADataOwner:
         # public keys authorities
         pk = {'UT': pk1, 'OU': pk2, 'OT': pk3, 'TU': pk4}
 
-        # with open('files/data_to_martsia.json', 'r') as file:
-        #     data = json.load(file)
-        # value1 = data['clear_data']
-        # _, value = list(data.items())[1]
-        # split_value = value[9:].split('\\n')
-        # result = {}
-        # for item in split_value:
-        #     key, value = item.split(':')
-        #     key = ' '.join(key.split())
-        #     value = ' '.join(value.split())
-        #     result[key] = value
-        # with open('files/data.json', 'w') as file:
-        #     file.write(json.dumps(result))
-       
-        #This informations should be given by the user as input
-        # '(8785437525079851029@UT and MANUFACTURER@UT) and (8785437525079851029@OU and MANUFACTURER@OU)'
-        # access_policy = ['(' + str(process_instance_id_env) + '@UT and ' + str(process_instance_id_env) + '@OU and ' + str(process_instance_id_env) + '@OT and '
-        #                  '' + str(process_instance_id_env) + '@TU) and (MANUFACTURER@UT or '
-        #                  'SUPPLIER@OU)',
-        #                  '(' + str(process_instance_id_env) + '@UT and ' + str(process_instance_id_env) + '@OU and ' + str(process_instance_id_env) + '@OT and '
-        #                  '' + str(process_instance_id_env) + '@TU) and (MANUFACTURER@UT or ('
-        #                  'SUPPLIER@OU and ELECTRONICS@OT)',
-        #                  '(' + str(process_instance_id_env) + '@UT and ' + str(process_instance_id_env) + '@OU and ' + str(process_instance_id_env) + '@OT and '
-        #                  '' + str(process_instance_id_env) + '@TU) and (MANUFACTURER@UT or ('
-        #                  'SUPPLIER@OU and MECHANICS@TU)']
-        #entries = [['ID', 'SortAs', 'GlossTerm'], ['Acronym', 'Abbrev'], ['Specs', 'Dates']]
-    
-        #
-
         if len(access_policy) != len(entries):
             print('ERROR: The number of policies and entries is different')
             print("Policy: ", len(access_policy), access_policy)
@@ -264,6 +235,9 @@ class MARTSIADataOwner:
         #     ciphered_file['clear_data'] = value1
         #     ciphered_file['martsia'] = hash_to_store
         #     file.write(json.dumps(ciphered_file))
-
-        print(os.system('python3.10 blockchain/Controlled/multisig/MessageContract/MessageContractMain.py %s %s %s %s' % (
-            self.dataOwner_private_key, self.app_id_messages, json_total['metadata']['message_id'], hash_file)))
+        if MULTISIG:
+            print(os.system('python3.10 blockchain/Controlled/multisig/MessageContract/MessageContractMain.py %s %s %s %s' % (
+                self.dataOwner_private_key, self.app_id_messages, json_total['metadata']['message_id'], hash_file)))
+        else:
+            print(os.system('python3.10 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
+                self.dataOwner_private_key, self.app_id_messages, json_total['metadata']['message_id'], hash_file)))        

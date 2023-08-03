@@ -169,7 +169,9 @@ class Authority:
                 com2.append(g2_x)
                 count += 1
             except Exception as e:
-                print(e)
+                if str(e) != 'value':
+                    if str(e) != 'list index out of range':
+                        print(e)
                 return False
 
         (value1, value2) = mpc_setup.generateParameters(groupObj, hashes1, hashes2, com1, com2)

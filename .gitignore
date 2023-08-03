@@ -5,3 +5,4 @@ lunch_docker.sh
 __pycache__/
 impl/architecture/keys
 *.db
+impl/client-server/*

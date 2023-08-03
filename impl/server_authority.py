@@ -9,6 +9,7 @@ import authority_key_generation
 import ipfshttpclient
 import sqlite3
 import argparse
+from decouple import config
 
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')

@@ -13,8 +13,10 @@ import argparse
 import subprocess
 import base64
 import ast
+from algosdk.encoding import decode_address, encode_address
 
-process_instance_id_env = config('PROCESS_INSTANCE_ID')
+
+#process_instance_id_env = config('PROCESS_INSTANCE_ID')
 app_id_box = config('APPLICATION_ID_BOX')
 
 
@@ -26,6 +28,8 @@ authorities_list = [config('AUTHORITY1_ADDRESS'),
 authorities_names = ['UT', 'OU', 'OT', 'TU']
 
 void_bytes = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+
+MULTISIG = config('MULTISIG') == 1
 
 class Authority:
     def __init__(self, authority_number):
@@ -53,8 +57,8 @@ class Authority:
         padding = '0' * 405
         authorities_name_padded = authorities_name + padding
 
-        self.x.execute("INSERT OR IGNORE INTO authority_names VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
-        self.conn.commit()
+        self.__x__.execute("INSERT OR IGNORE INTO authority_names VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
+        self.__conn__.commit()
 
         # x.execute("SELECT * FROM authority_names WHERE process_instance=?", (process_instance_id,))
         # result = x.fetchall()
@@ -62,8 +66,13 @@ class Authority:
         #     u1.write(result[0][1])
 
         method = 'put_box'
-        print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
-            self.__authority_private_key__, method, app_id_box, authorities_name_padded)))
+        if MULTISIG:
+            print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, authorities_name_padded)))
+        else:
+            print(app_id_box)
+            print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, authorities_name_padded)))
 
 
     def initial_parameters_hashed(self, groupObj, process_instance_id):
@@ -71,46 +80,60 @@ class Authority:
         g2_1 = groupObj.random(G2)
         (h1_1, h2_1) = mpc_setup.commit(groupObj, g1_1, g2_1)
 
-        self.x.execute("INSERT OR IGNORE INTO h_values VALUES (?,?,?)", (process_instance_id, h1_1, h2_1))
-        self.conn.commit()
+        self.__x__.execute("INSERT OR IGNORE INTO h_values VALUES (?,?,?)", (process_instance_id, h1_1, h2_1))
+        self.__conn__.commit()
 
         method = 'read_box'
-        result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', authority1_private_key, method,
-                                app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        if MULTISIG:
+            result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
+                                    app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        else:
+            result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
+                        app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
         authorities = result[:47]
         hashed = authorities + h1_1 + ',' + h2_1 + '#'
         padding = '0' * 275
         hashed_padded = hashed + padding
-
         method = 'put_box'
-        print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
-            self.__authority_private_key__, method, app_id_box, hashed_padded)))
-
+        if MULTISIG:
+            print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, hashed_padded)))
+        else:
+            print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, hashed_padded)))
         g1_1_bytes = groupObj.serialize(g1_1)
         g2_1_bytes = groupObj.serialize(g2_1)
 
-        self.x.execute("INSERT OR IGNORE INTO g_values VALUES (?,?,?)", (process_instance_id, g1_1_bytes, g2_1_bytes))
-        self.conn.commit()
+        self.__x__.execute("INSERT OR IGNORE INTO g_values VALUES (?,?,?)", (process_instance_id, g1_1_bytes, g2_1_bytes))
+        self.__conn__.commit()
 
 
 
     def initial_parameters(self, process_instance_id):
-        self.x.execute("SELECT * FROM g_values WHERE process_instance=?", (process_instance_id,))
-        result = self.x.fetchall()
+        self.__x__.execute("SELECT * FROM g_values WHERE process_instance=?", (process_instance_id,))
+        result = self.__x__.fetchall()
         g1_1_bytes = result[0][1]
         g2_1_bytes = result[0][2]
 
         method = 'read_box'
-        result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
-                                app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        if MULTISIG:
+            result = subprocess.run(['python3.10', 'blockchain/Controlled/multisig/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
+                                    app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        else:
+            result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
+                        app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
         elements = g1_1_bytes.decode('utf-8') + ',' + g2_1_bytes.decode('utf-8') + '#'
         hashed_elements = result[:177] + elements
         padding = '0' * 93
         hashed_elements_padded = hashed_elements + padding
 
         method = 'put_box'
-        print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
-            self.__authority_private_key__, method, app_id_box, hashed_elements_padded)))
+        if MULTISIG:
+            print(os.system('python3.10 blockchain/Controlled/multisig/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, hashed_elements_padded)))
+        else:
+            print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+                self.__authority_private_key__, method, app_id_box, hashed_elements_padded)))
 
     def generate_public_parameters(self, groupObj, maabe, api, process_instance_id):
         hashes1 = []
@@ -121,28 +144,33 @@ class Authority:
         method = 'read_specific_box'
         count = 0
         for auth in authorities_list:
-            box_name = base64.b64encode(decode_address(authorities_list))
+            box_name = base64.b64encode(decode_address(auth))
             result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', method,
                                 app_id_box, box_name], stdout=subprocess.PIPE).stdout.decode('utf-8')
             
             result = ast.literal_eval(result)
-            all_elements = base64.b64decode(result['value']).decode('utf-8')
-            all_elements = all_elements.split('#')
-            g1gx_2_hashed = all_elements[1]
-            g1gx_2_hashed_split = g1gx_2_hashed.split(',')
-            g1gx_2 = all_elements[2]
-            g1gx_2_split = g1gx_2.split(',')
-            g1_x = g1gx_2_split[0]
-            g1_x = bytes(g1_x, 'utf-8')
-            g1_x = groupObj.deserialize(g1_x)
-            g2_x = g1gx_2_split[1]
-            g2_x = bytes(g2_x, 'utf-8')
-            g2_x = groupObj.deserialize(g2_x)
-            hashes1.append(g1gx_2_hashed_split[0])
-            hashes2.append(g1gx_2_hashed_split[1])
-            com1.append(g1_x)
-            com2.append(g2_x)
-            count += 1
+            #TODO: Manage this part
+            try:
+                all_elements = base64.b64decode(result['value']).decode('utf-8') #error, maybe fixed, value is not a key
+                all_elements = all_elements.split('#')
+                g1g2_x_hashed = all_elements[1]
+                g1g2_x_hashed_split = g1g2_x_hashed.split(',')
+                g1g2_x = all_elements[2]
+                g1g2_x_split = g1g2_x.split(',')
+                g1_x = g1g2_x_split[0]
+                g1_x = bytes(g1_x, 'utf-8')
+                g1_x = groupObj.deserialize(g1_x)
+                g2_x = g1g2_x_split[1] #Error Out of range
+                g2_x = bytes(g2_x, 'utf-8')
+                g2_x = groupObj.deserialize(g2_x)
+                hashes1.append(g1g2_x_hashed_split[0])
+                hashes2.append(g1g2_x_hashed_split[1])
+                com1.append(g1_x)
+                com2.append(g2_x)
+                count += 1
+            except Exception as e:
+                print(e)
+                return False
 
         (value1, value2) = mpc_setup.generateParameters(groupObj, hashes1, hashes2, com1, com2)
 
@@ -155,8 +183,8 @@ class Authority:
         hash_file = api.add_json(file_to_str)
         print(f'ipfs hash: {hash_file}')
 
-        self.x.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
-        self.conn.commit()
+        self.__x__.execute("INSERT OR IGNORE INTO public_parameters VALUES (?,?,?)", (process_instance_id, hash_file, file_to_str))
+        self.__conn__.commit()
 
         # name_file = 'files/authority1/public_parameters_authority1_' + str(process_instance_id) + '.txt'
         # with open(name_file, 'wb') as ipfs:
@@ -176,6 +204,7 @@ class Authority:
         method = 'put_box'
         print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
             self.__authority_private_key__, method, app_id_box, hashed_elements_pp_padded)))
+        return True
 
 
 
@@ -208,14 +237,23 @@ class Authority:
         self.__x__.execute("INSERT OR IGNORE INTO public_keys VALUES (?,?,?)", (str(process_instance_id), hash_file, pk1_bytes))
         self.__conn__.commit()
 
-        block_int.send_publicKey_link(self.authority_address, self.__authority_private_key__, process_instance_id, hash_file)
+        #TODO: WRITE MULTISIG CONTRACT CALL
+        method = 'read_box'
+        result = subprocess.run(['python3.10', 'blockchain/BoxContract/BoxContractMain.py', self.__authority_private_key__, method,
+                                app_id_box], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        hashed_elements_pp_pk = result[:406] + hash_file
+
+        method = 'put_box'
+        print(os.system('python3.10 blockchain/BoxContract/BoxContractMain.py %s %s %s %s' % (
+            self.__authority_private_key__, method, app_id_box, hashed_elements_pp_pk)))
+        
 
 
 def main():
     groupObj = PairingGroup('SS512')
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
-    process_instance_id = int(process_instance_id_env)
+    process_instance_id = int(app_id_box)
 
     parser = argparse.ArgumentParser(description='Authority')
     parser.add_argument('-a', '--authority', type=int, default='MANUFACTURER',help='Authority number')

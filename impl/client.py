@@ -16,19 +16,13 @@ app_id_box = config('APPLICATION_ID_BOX')
 creation and connection of the secure channel using SSL protocol
 """
 
-context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=server_cert)
-context.load_cert_chain(certfile=client_cert, keyfile=client_key)
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-conn = context.wrap_socket(s, server_side=False, server_hostname=server_sni_hostname)
-conn.connect(ADDR)
-
 
 def sign_number(authority_invoked):
     x.execute("SELECT * FROM handshake_number WHERE process_instance=? AND authority_name=?",
               (process_instance_id, authority_invoked))
-    result = x.fetchall()
+    result = x.fetchall()  
+    print("result:  \t", result)
     number_to_sign = result[0][2]
-
     # with open('files/reader/number to sign_' + authority_invoked + '.txt', 'r') as r:
     #     number_to_sign = r.read()
     # number_to_sign = int(number_to_sign)
@@ -65,13 +59,11 @@ def send(msg):
     conn.send(message)
     receive = conn.recv(6000).decode(FORMAT)
     if len(receive) != 0:
-        # if receive[:15] == 'number to sign:':
-        #     x.execute("INSERT OR IGNORE INTO handshake_number VALUES (?,?,?)",
-        #               (process_instance_id, authority, receive[16:]))
-        #     connection.commit()
-        # with open('files/reader/number to sign_' + authority + '.txt', "w") as text_file:
-        #     text_file.write(receive[16:])
-        print(receive)
+        if receive.startswith('number to sign:'):
+            x.execute("INSERT OR IGNORE INTO handshake_number VALUES (?,?,?)",
+                    (str(process_instance_id), authority, receive[16:]))
+            connection.commit()
+            return True
         x.execute("INSERT OR IGNORE INTO authorities_generated_decription_keys VALUES (?,?,?)",
                   (process_instance_id, authority, receive))
         connection.commit()
@@ -86,10 +78,10 @@ def send(msg):
         #     text_file.write(receive)
 
 
-manufacturer = config('READER_ADDRESS_MANUFACTURER')
-electronics = config('READER_ADDRESS_SUPPLIER1')
-mechanics = config('READER_ADDRESS_SUPPLIER2')
-reader_address = electronics
+manufacturer = p('DATAOWNER_MANUFACTURER_ADDRESS')
+electronics = config('READER_SUPPLIER1_ADDRESS')
+mechanics = config('READER_SUPPLIER2_ADDRESS')
+reader_address = manufacturer
 process_instance_id = int(app_id_box)
 gid = "bob"
 

@@ -138,7 +138,7 @@ if __name__ == "__main__":
         app_id = create_test_app()
         print(app_id)
         store_to_env(app_id, 'APPLICATION_ID_BOX')
-
     else:
         app_id = config("APPLICATION_ID_BOX")
-        fund_program(app_id)
+    # Move from crator to box application 5 algos
+    fund_program(app_id)

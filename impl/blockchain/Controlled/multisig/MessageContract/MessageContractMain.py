@@ -4,6 +4,7 @@ from algosdk.abi import Method, Contract
 import sys
 import base64
 from algosdk import account
+from decouple import config
 
 algod_address = config("ALGOD_ADDRESS")
 algod_token = config("ALGOD_TOKEN")

@@ -147,7 +147,6 @@ def call_box_method(app_id: int, authority_private_key, method: abi.Method, args
 
     info = client.pending_transaction_info(resp.tx_ids[0])
     # print(f"Box Txn Info: {info}")
-
     # Decoded the returned output and print
     if "logs" in info:
         return info["logs"]
@@ -159,6 +158,11 @@ def put_box(app_id: int, authority_private_key, values):
     box_return = call_box_method(
         app_id, authority_private_key, put_method, [values]
     )
+    print(f"App ID: {app_id}")
+    print(f"Authority: {authority_private_key}")
+    print(f"put_methond: {put_method}")
+    print(f"Values: {values}")
+    #print(f"Box not decrpyted: {box_return}")
     print(f"Returned box: {decode_return_value(box_return)}\n")
 
 

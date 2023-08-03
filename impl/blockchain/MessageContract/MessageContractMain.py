@@ -2,7 +2,6 @@ from MessageContract import *
 from algosdk.atomic_transaction_composer import AtomicTransactionComposer
 import sys
 from decouple import config
-
 # sys.path.insert(0, '../')
 # from util import *
 sys.path.insert(1, 'blockchain/')

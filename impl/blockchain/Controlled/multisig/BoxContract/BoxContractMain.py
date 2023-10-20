@@ -7,10 +7,11 @@ from algosdk import mnemonic
 from algosdk.encoding import decode_address, encode_address
 import sys
 from algosdk.v2client import indexer
+from decuple import config
 
 
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }

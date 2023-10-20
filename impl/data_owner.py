@@ -13,6 +13,7 @@ import subprocess
 from algosdk.encoding import decode_address, encode_address
 import ast
 import sqlite3
+import argparse
 
 app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
@@ -22,8 +23,10 @@ authority2_address = config('AUTHORITY2_ADDRESS')
 authority3_address = config('AUTHORITY3_ADDRESS')
 authority4_address = config('AUTHORITY4_ADDRESS')
 
-data_owner_address = config('DATAOWNER_ADDRESS')
-data_owner_private_key = config('DATAOWNER_PRIVATEKEY')
+data_owner_address = config('DATAOWNER_MANUFACTURER_ADDRESS')
+data_owner_private_key = config('DATAOWNER_MANUFACTURER_PRIVATEKEY')
+
+MULTISIG = config('MULTISIG') == 1
 
 # Connection to SQLite3 data_owner database
 conn = sqlite3.connect('files/data_owner/data_owner.db')
@@ -111,7 +114,7 @@ def retrieve_public_parameters(process_instance_id):
     return public_parameters
 
 
-def main(groupObj, maabe, api, process_instance_id):
+def cipher_data(groupObj, maabe, api, process_instance_id):
     public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
@@ -236,16 +239,27 @@ def main(groupObj, maabe, api, process_instance_id):
     # new_file = api.add(name_file)
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
+    if MULTISIG:
+        print(os.system('python3.10 blockchain/Controlled/multisig/MessageContract/MessageContractMain.py %s %s %s %s' % (
+            data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))
+    else:
+        print(os.system('python3.10 blockchain/MessageContract/MessageContractMain.py %s %s %s %s' % (
+            data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))
 
-    print(os.system('python3.10 blockchain/Controlled/multisig/MessageContract/MessageContractMain.py %s %s %s %s' % (
-        data_owner_private_key, app_id_messages, json_total['metadata']['message_id'], hash_file)))
 
 
 if __name__ == '__main__':
     groupObj = PairingGroup('SS512')
     maabe = MaabeRW15(groupObj)
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
-
     process_instance_id = int(app_id_box)
-    # generate_pp_pk(process_instance_id)
-    main(groupObj, maabe, api, process_instance_id)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-g' ,'--generate', action='store_true')
+    parser.add_argument('-c','--cipher', action='store_true')
+
+    args = parser.parse_args()
+    if args.generate:
+        generate_pp_pk(process_instance_id)
+    if args.cipher:
+        cipher_data(groupObj, maabe, api, process_instance_id)

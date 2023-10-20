@@ -55,3 +55,18 @@ def get_method(name: str, js: str) -> Method:
         if m.name == name:
             return m
     raise Exception("No method with the name {}".format(name))
+
+def store_to_env(value, label):
+    with open('../../.env', 'r', encoding='utf-8') as file:
+        data = file.readlines()
+    edited = False
+    for line in data:
+        if line.startswith(label):
+            data.remove(line)
+            break
+    line = label + "=" + str(value) + "\n"
+    #line = "\n" +  label + "=" + value + "\n"
+    data.append(line)
+
+    with open('../../.env', 'w', encoding='utf-8') as file:
+        file.writelines(data)

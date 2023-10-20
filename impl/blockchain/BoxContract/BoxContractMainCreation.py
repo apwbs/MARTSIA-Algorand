@@ -1,17 +1,19 @@
 import base64
 from algosdk import abi, atomic_transaction_composer, logic
-from algosdk.future import transaction
+from algosdk import transaction
 from algosdk.v2client import algod
 from algosdk import account
 from algosdk import mnemonic
 from algosdk.encoding import decode_address, encode_address
 import sys
 from algosdk.v2client import indexer
+from decouple import config
+import argparse
+from BoxContract import *
 
-
-creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+creator_mnemonic = config("CREATOR_MNEMONIC")
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }
@@ -111,16 +113,32 @@ def fund_program(app_id: int):
     client.send_transactions([signed_txn])
     _ = transaction.wait_for_confirmation(client, tx_id, 5)
 
+def store_to_env(value, label):
+    with open('../../.env', 'r', encoding='utf-8') as file:
+        data = file.readlines()
+    edited = False
+    for line in data:
+        if line.startswith(label):
+            data.remove(line)
+            break
+    line = label + "=" + str(value) + "\n"
+    #line = "\n" +  label + "=" + value + "\n"
+    data.append(line)
+
+    with open('../../.env', 'w', encoding='utf-8') as file:
+        file.writelines(data)
+
 
 if __name__ == "__main__":
-    #############
-    ###1st run###
-    #############
-    app_id = create_test_app()
-    print(app_id)
 
-    #############
-    ###2nd run###
-    #############
-    # app_id = 154291405
-    # fund_program(app_id)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f","--firstrun", help="True if this is the first run of the script, False otherwise", action="store_true")
+    args = parser.parse_args()
+    if args.firstrun:
+        app_id = create_test_app()
+        print(app_id)
+        store_to_env(app_id, 'APPLICATION_ID_BOX')
+    else:
+        app_id = config("APPLICATION_ID_BOX")
+    # Move from crator to box application 5 algos
+    fund_program(app_id)

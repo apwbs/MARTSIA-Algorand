@@ -5,24 +5,23 @@ from hashlib import sha512
 import ipfshttpclient
 import sqlite3
 import io
+import argparse
 
 api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 app_id_pk_readers = config('APPLICATION_ID_PK_READERS')
 
-manufacturer_address = config('READER_ADDRESS_MANUFACTURER')
-manufacturer_private_key = config('READER_PRIVATEKEY_MANUFACTURER')
-electronics_address = config('READER_ADDRESS_SUPPLIER1')
-electronics_private_key = config('READER_PRIVATEKEY_SUPPLIER1')
-mechanics_address = config('READER_ADDRESS_SUPPLIER2')
-mechanics_private_key = config('READER_PRIVATEKEY_SUPPLIER2')
+parser = argparse.ArgumentParser(description='Reader name')
+parser.add_argument('-r', '--reader', type=str, default='MANUFACTURER',help='Reader name')
 
-reader_address = mechanics_address
-private_key = mechanics_private_key
+args = parser.parse_args()
+reader_address = config(args.reader + '_ADDRESS')
+private_key = config(args.reader + '_PRIVATEKEY')
 
 # Connection to SQLite3 reader database
 conn = sqlite3.connect('files/reader/reader.db')
 x = conn.cursor()
 
+MULTISIG = config('MULTISIG') == 1
 
 def generate_keys():
     keyPair = RSA.generate(bits=1024)
@@ -59,7 +58,12 @@ def generate_keys():
     # hash_file = new_file['Hash']
     # print(f'ipfs hash: {hash_file}')
 
-    print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
+    if MULTISIG:
+        print(os.system('python3.10 blockchain/Controlled/multisig/PublicKeysReadersContract/PKReadersContractMain.py %s '
+                    '%s %s' % (
+                        private_key, app_id_pk_readers, hash_file)))
+    else:
+        print(os.system('python3.10 blockchain/PublicKeysReadersContract/PKReadersContractMain.py %s '
                     '%s %s' % (
                         private_key, app_id_pk_readers, hash_file)))
 

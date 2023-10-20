@@ -1,0 +1,128 @@
+#pragma version 8
+txn NumAppArgs
+int 0
+==
+bnz main_l10
+txna ApplicationArgs 0
+method "put(string)void"
+==
+bnz main_l9
+txna ApplicationArgs 0
+method "read()void"
+==
+bnz main_l8
+txna ApplicationArgs 0
+method "length()void"
+==
+bnz main_l7
+txna ApplicationArgs 0
+method "delete()void"
+==
+bnz main_l6
+err
+main_l6:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub delete_3
+int 1
+return
+main_l7:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub length_2
+int 1
+return
+main_l8:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub read_1
+int 1
+return
+main_l9:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+store 0
+load 0
+callsub put_0
+int 1
+return
+main_l10:
+txn OnCompletion
+int NoOp
+==
+bnz main_l12
+err
+main_l12:
+txn ApplicationID
+int 0
+==
+assert
+int 1
+return
+
+// put
+put_0:
+proto 1 0
+txn Sender
+frame_dig -1
+extract 2 0
+box_put
+int 1
+return
+
+// read
+read_1:
+proto 0 0
+txn Sender
+box_get
+store 2
+store 1
+load 1
+log
+retsub
+
+// length
+length_2:
+proto 0 0
+txn Sender
+box_len
+store 4
+store 3
+load 3
+itob
+log
+retsub
+
+// delete
+delete_3:
+proto 0 0
+txn Sender
+box_del
+itob
+log
+retsub

@@ -7,11 +7,13 @@ from algosdk import mnemonic
 from algosdk.encoding import decode_address, encode_address
 import sys
 from algosdk.v2client import indexer
+from decouple import config
 
 
-creator_mnemonic = "infant flag husband illness gentle palace eye tilt large reopen current purity enemy depart couch moment gate transfer address diamond vital between unlock able cave"
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+
+creator_mnemonic = config("CREATOR_MNEMONIC")
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }
@@ -145,7 +147,6 @@ def call_box_method(app_id: int, authority_private_key, method: abi.Method, args
 
     info = client.pending_transaction_info(resp.tx_ids[0])
     # print(f"Box Txn Info: {info}")
-
     # Decoded the returned output and print
     if "logs" in info:
         return info["logs"]
@@ -157,6 +158,11 @@ def put_box(app_id: int, authority_private_key, values):
     box_return = call_box_method(
         app_id, authority_private_key, put_method, [values]
     )
+    print(f"App ID: {app_id}")
+    print(f"Authority: {authority_private_key}")
+    print(f"put_methond: {put_method}")
+    print(f"Values: {values}")
+    #print(f"Box not decrpyted: {box_return}")
     print(f"Returned box: {decode_return_value(box_return)}\n")
 
 

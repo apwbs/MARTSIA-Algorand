@@ -1,0 +1,1 @@
+{"name": "StorageMessageContract", "methods": [{"name": "create_app", "args": [], "returns": {"type": "void"}}, {"name": "on_save", "args": [{"type": "string", "name": "message_id"}, {"type": "string", "name": "ipfs_link"}], "returns": {"type": "void"}}], "networks": {}}

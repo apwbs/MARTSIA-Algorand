@@ -12,6 +12,7 @@ from algosdk.encoding import decode_address, encode_address
 import ast
 import retriever
 import sqlite3
+import argparse
 
 app_id_box = config('APPLICATION_ID_BOX')
 app_id_messages = config('APPLICATION_ID_MESSAGES')
@@ -50,7 +51,7 @@ def retrieve_data(authority_address):
     return authorities, public_parameters
 
 
-def generate_public_parameters():
+def generate_public_parameters(process_instance_id):
     check_authorities = []
     check_parameters = []
 
@@ -104,7 +105,7 @@ def actual_decryption(remaining, public_parameters, user_sk, ciphertext_dict):
     print(dict(decoded_final))
 
 
-def main(process_instance_id, message_id, slice_id):
+def main(process_instance_id, message_id, slice_id, gid):
     public_parameters = retrieve_public_parameters(process_instance_id)
     public_parameters = bytesToObject(public_parameters, groupObj)
     H = lambda x: self.group.hash(x, G2)
@@ -117,6 +118,7 @@ def main(process_instance_id, message_id, slice_id):
     #     user_sk1 = us1.read()
     # user_sk1 = bytesToObject(user_sk1, groupObj)
 
+    # TODO: Make it shorter
     x.execute("SELECT * FROM authorities_generated_decription_keys WHERE process_instance=? AND authority_name=?",
               (str(process_instance_id), 'Auth-1'))
     result = x.fetchall()
@@ -145,7 +147,7 @@ def main(process_instance_id, message_id, slice_id):
     user_sk4 = user_sk4.encode()
     user_sk4 = bytesToObject(user_sk4, groupObj)
 
-    user_sk = {'GID': 'bob', 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
+    user_sk = {'GID': gid, 'keys': merge_dicts(user_sk1, user_sk2, user_sk3, user_sk4)}
 
     # decrypt
     response = retriever.retrieveMessage(app_id_messages, message_id)
@@ -171,7 +173,15 @@ if __name__ == '__main__':
     api = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
 
     process_instance_id = int(app_id_box)
-    # generate_public_parameters()
-    message_id = 17149713040810547922
-    slice_id = 6123765222549631388
-    main(process_instance_id, message_id, slice_id)
+    parser =argparse.ArgumentParser(description="Reader details", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-m", "--message_id", type=int, help="message id", default=409349685654515625)
+    parser.add_argument("-s", "--slice_id", type=int, help="slice id", default=0)
+    parser.add_argument("-g", "--generate", action='store_true', help='Handshake')
+    parser.add_argument("--gid", type=str, help="gid", default='bob')
+    args = parser.parse_args()
+    if args.generate:
+        generate_public_parameters(process_instance_id)
+    message_id = args.message_id
+    slice_id = args.slice_id
+    gid = args.gid
+    main(process_instance_id, message_id, slice_id, gid)

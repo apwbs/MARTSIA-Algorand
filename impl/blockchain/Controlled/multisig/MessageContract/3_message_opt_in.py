@@ -1,14 +1,15 @@
 from algosdk.atomic_transaction_composer import *
 from pyteal import *
+from decuple import config
 
-algod_address = "https://testnet-algorand.api.purestake.io/ps2"
-algod_token = "p8IwM35NPv3nRf0LLEquJ5tmpOtcC4he7KKnJ3wE"
+algod_address = config("ALGOD_ADDRESS")
+algod_token = config("ALGOD_TOKEN")
 headers = {
     "X-API-Key": algod_token,
 }
 
-DATAOWNER_ADDRESS='SVCAKVYOAWOUKTB4YK3DQH2SCEMAKZ3OVLXIBUANDMJNOI7COXUO34NWG4'
-DATAOWNER_PRIVATEKEY='8iTtNZ9wCphZUYjQrE8r3SHcSDb7r6xBr0Gn9Avm4UCVRAVXDgWdRUw8wrY4H1IRGAVnbqrugNANGxLXI+J16A=='
+DATAOWNER_ADDRESS = config("DATAOWNER_MANUFACTURER_ADDRESS")
+DATAOWNER_PRIVATEKEY = config("DATAOWNER_MANUFACTURER_PRIVATEKEY")
 
 def main():
     algod_client = algod.AlgodClient(algod_token, algod_address, headers)

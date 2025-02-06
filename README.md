@@ -1,6 +1,8 @@
 # MARTSIA-Algorand
 
-This repository contains the Algorand implementation of the MARTSIA approach presented in the paper entitled: "[MARTSIA: Enabling Data Confidentiality for Blockchain-based Process Execution](https://arxiv.org/abs/2303.17977)". For the Ethereum-based implementation, please check out https://github.com/apwbs/MARTSIA-Ethereum.
+This repository contains the Algorand implementation of the MARTSIA approach presented in the paper entitled: "[MARTSIA: Enabling Data Confidentiality for Blockchain-based Process Execution](https://arxiv.org/abs/2303.17977)".
+
+In this version, the request and transmission of key segments between the Reader and Authorities are performed via TLS connections.
 
 ## Guide
 
@@ -129,3 +131,6 @@ all the key parts, just run the 'reader.py' script as described below.
 Once you have obtained a part of a key from all the authorities,
 open the 'reader.py' file and run the generate_public_parameters() function. Then put the right values in the 'message_id' and
 'slice_id' constants and run the main() function to read the message.
+
+## MARTSIA main GitHub page
+For more details about MARTSIA, refer to the [main MARTSIA GitHub page](https://github.com/apwbs/MARTSIA).
